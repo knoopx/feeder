@@ -17,7 +17,7 @@ export const ItemListColumn = inject("store")(
       <div {...props}>
         <Header className="justify-between border-pink-700 border-r">
           <input
-            className="appearance-none outline-none bg-transparent text-pink-500 placeholder-white"
+            className="appearance-none outline-none flex-auto py-1 bg-transparent text-pink-500 placeholder-white"
             placeholder="Filter..."
             value={store.filter}
             onChange={(e) => {
