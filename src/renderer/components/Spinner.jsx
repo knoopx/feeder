@@ -1,12 +1,7 @@
 import React from "react"
 
-export const Spinner = ({ size, color, className }) => (
-  <svg
-    className={["spinner", className]}
-    width={size}
-    height={size}
-    viewBox="0 0 100 100"
-  >
+export const Spinner = ({ size, color, ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" {...props}>
     <g transform="translate(10 10)">
       <circle
         fill="none"
