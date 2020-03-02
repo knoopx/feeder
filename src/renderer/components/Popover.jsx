@@ -3,6 +3,7 @@ import ReactDOM from "react-dom"
 import classNames from "classnames"
 import { animated, useSpring } from "react-spring"
 import { usePopper, useOnClickOutside } from "hooks"
+import { useHotkeys } from "react-hotkeys-hook"
 
 export const Popover = ({
   children,
@@ -18,6 +19,7 @@ export const Popover = ({
   const arrowRef = useRef()
 
   useOnClickOutside(popoverRef, onDismiss)
+  useHotkeys("escape", onDismiss)
 
   const spring = useSpring({
     from: {
