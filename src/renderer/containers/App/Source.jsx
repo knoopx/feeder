@@ -1,12 +1,12 @@
 import React from "react"
 import { inject, observer } from "mobx-react"
-import { MdError } from "react-icons/md"
+import { MdError, MdDelete } from "react-icons/md"
 import { Spinner, Badge, FavIcon } from "components"
 import classNames from "classnames"
 import { formatDistance } from "date-fns"
 import { now } from "mobx-utils"
 
-const Source = ({ source, isActive, className, store, ...props }) => {
+const Source = ({ source, isActive, className, editMode, store, ...props }) => {
   return (
     <div
       className={classNames("cursor-pointer flex border-b", className)}
@@ -49,6 +49,13 @@ const Source = ({ source, isActive, className, store, ...props }) => {
         <div className="flex items-center">
           {source.isLoading ? (
             <Spinner size="1.25rem" className="ml-4" />
+          ) : editMode ? (
+            <a
+              className="text-gray-600"
+              onClick={() => store.removeSource(source)}
+            >
+              <MdDelete size="1.25rem" />
+            </a>
           ) : (
             source.newItemsCount > 0 && (
               <Badge className={classNames("ml-4 text-gray-600")}>

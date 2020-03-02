@@ -1,10 +1,9 @@
-import React, { useRef } from "react"
+import React, { forwardRef, useRef } from "react"
 import electron from "electron"
 import {
   MdRefresh,
   MdFileDownload,
-  MdViewList,
-  MdViewStream,
+  MdModeEdit,
   MdAddCircle,
 } from "react-icons/md"
 import { Header } from "components"
@@ -14,12 +13,22 @@ import classNames from "classnames"
 import { AddSourcePopover } from "./AddSourcePopover"
 import { SourceList } from "./SourceList"
 
+const Button = forwardRef(({ className, ...props }, ref) => {
+  return (
+    <a
+      ref={ref}
+      className={classNames("cursor-pointer block", className)}
+      {...props}
+    />
+  )
+})
+
 export const SourceListColumn = inject("store")(
   observer(({ store, ...props }) => {
     const ref = useRef()
 
-    const localStore = useLocalStore(() => ({
-      isOpen: false,
+    const state = useLocalStore(() => ({
+      isPopoverOpen: false,
       value: "",
     }))
 
@@ -28,7 +37,11 @@ export const SourceListColumn = inject("store")(
     }
 
     const onAdd = () => {
-      localStore.isOpen = true
+      state.isPopoverOpen = true
+    }
+
+    const onToggleEdit = () => {
+      state.isEditing = !state.isEditing
     }
 
     const onImport = async () => {
@@ -55,36 +68,41 @@ export const SourceListColumn = inject("store")(
       <div {...props}>
         <Header className="pl-20 border-pink-700 border-r">
           <div className="flex flex-auto items-center justify-end">
-            <a
-              ref={ref}
-              className="cursor-pointer mr-2 text-pink-500"
-              onClick={onAdd}
-            >
+            <Button ref={ref} className="mr-2" onClick={onAdd}>
               <MdAddCircle size="1.25rem" />
-            </a>
-            {localStore.isOpen && (
+            </Button>
+            {state.isPopoverOpen && (
               <AddSourcePopover
                 referenceElement={ref}
                 onDismiss={() => {
-                  localStore.isOpen = false
+                  state.isPopoverOpen = false
                 }}
               />
             )}
-            <a
-              className="cursor-pointer mr-4 pr-4 border-pink-500 border-r text-pink-500"
+            <Button
+              className="mr-4 pr-4 border-pink-500 border-r"
               onClick={onImport}
             >
               <MdFileDownload size="1.25rem" />
-            </a>
+            </Button>
 
-            <a className="cursor-pointer text-pink-500" onClick={onRefresh}>
+            <Button
+              className={classNames("mr-4 pr-4 border-pink-500 border-r", {
+                "text-white": state.isEditing,
+              })}
+              onClick={onToggleEdit}
+            >
+              <MdModeEdit size="1.25rem" />
+            </Button>
+
+            <Button onClick={onRefresh}>
               <MdRefresh size="1.25rem" />
-            </a>
+            </Button>
           </div>
         </Header>
 
         <div className="flex flex-auto flex-col overflow-hidden border-r">
-          <SourceList />
+          <SourceList editMode={state.isEditing} />
         </div>
         {store.pending.length > 0 && (
           <div className="flex justify-between px-4 py-1 border-pink-800 bg-pink-700 text-shadow text-sm text-white font-medium">

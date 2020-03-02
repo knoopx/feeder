@@ -6,7 +6,7 @@ import { sumBy } from "lodash"
 import Source from "./Source"
 
 export const SourceList = inject("store")(
-  observer(({ store }) => {
+  observer(({ store, editMode }) => {
     return (
       <div className="flex flex-auto flex-col overflow-auto">
         <Source
@@ -20,6 +20,7 @@ export const SourceList = inject("store")(
         {store.sortedSources.map((source) => (
           <Source
             key={source.href}
+            editMode={editMode}
             source={source}
             isActive={store.activeSource === source}
             onClick={() => store.setActiveSource(source)}

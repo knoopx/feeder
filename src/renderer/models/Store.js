@@ -1,6 +1,6 @@
 import { values, autorun } from "mobx"
 import { orderBy, flatten, map } from "lodash"
-import { types as t } from "mobx-state-tree"
+import { types as t, destroy } from "mobx-state-tree"
 import { remote } from "electron"
 import { parseOPML } from "support/opml"
 
@@ -11,12 +11,24 @@ const disposables = []
 
 export default t
   .model("Store", {
-    activeSource: t.maybeNull(t.reference(Source)),
+    activeSource: t.maybeNull(
+      t.reference(Source, {
+        onInvalidated(e) {
+          e.removeRef()
+        },
+      }),
+    ),
     sources: t.optional(t.map(Source), {}),
     concurrency: t.optional(t.number, 4),
     filter: t.optional(t.string, ""),
     mode: t.optional(t.enumeration(["split", "stream"]), "split"),
-    activeItem: t.maybeNull(t.reference(Item)),
+    activeItem: t.maybeNull(
+      t.reference(Item, {
+        onInvalidated(e) {
+          e.removeRef()
+        },
+      }),
+    ),
   })
   .views((self) => ({
     get pending() {
@@ -136,7 +148,7 @@ export default t
       self.sources.put(source)
     },
     removeSource(source) {
-      self.sources.delete(source.key)
+      destroy(source)
     },
     clearItems() {
       self.allItems.forEach((x) => x.markAsRead())
