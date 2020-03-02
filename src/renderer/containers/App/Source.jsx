@@ -22,14 +22,11 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
         )}
       >
         <div
-          className={classNames(
-            "flex flex-auto flex-col  max-w-full truncate",
-            {
-              "font-semibold": isActive,
-            },
-          )}
+          className={classNames("flex flex-auto flex-col max-w-full min-w-0", {
+            "font-semibold": isActive,
+          })}
         >
-          <div className="flex items-center leading-none">
+          <div className="flex flex-auto items-center">
             {source.error ? (
               <span className="mr-2 text-red-600" title={source.error.message}>
                 <MdError size="1.25rem" />
@@ -37,7 +34,7 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
             ) : (
               <FavIcon className="mr-2" src={source.href} />
             )}
-            <div>{source.name}</div>
+            <div className="min-w-0 truncate">{source.name}</div>
           </div>
           {source.updatedAt > 0 && (
             <div className="ml-6 text-gray-600 text-xs">
