@@ -72,7 +72,7 @@ export default t
       })
     },
     get activeItemIndex() {
-      return self.allItems.indexOf(self.activeItem)
+      return self.filteredItems.indexOf(self.activeItem)
     },
     calcNextItemIndex(direction) {
       return self.activeItemIndex + direction
