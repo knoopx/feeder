@@ -35,6 +35,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
+        git fetch --prune --unshallow
         sudo snap install hub --classic
         sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install -y wine32 wine-stable
 
