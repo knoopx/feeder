@@ -1,0 +1,13 @@
+appId: net.knoopx.Feeder
+productName: Feeder
+directories:
+  output: release
+files:
+  - package.json
+  - build/**/*
+  - from: dist/electron
+    to: .
+mac:
+  target: zip
+  category: public.app-category.productivity
+  identity: null

@@ -1,0 +1,92 @@
+.preview {
+  * {
+    user-select: auto !important;
+  }
+
+  code {
+    font-family: "Monaco";
+  }
+
+  :not(pre) > code {
+    @apply .bg-gray-200 .rounded .px-2 .py-1 .text-xs .mx-1;
+  }
+
+  pre {
+    @apply .leading-tight .text-sm .overflow-auto;
+  }
+
+  p,
+  pre,
+  img,
+  blockquote,
+  ul,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  hr {
+    @apply .mb-4;
+  }
+
+  b,
+  strong,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply .font-medium;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply .leading-tight;
+  }
+
+  h1 {
+    @apply .text-5xl;
+  }
+
+  h2 {
+    @apply .text-4xl;
+  }
+
+  h3 {
+    @apply .text-3xl;
+  }
+
+  h4 {
+    @apply .text-2xl;
+  }
+
+  h5 {
+    @apply .text-xl;
+  }
+
+  h6 {
+    @apply .text-lg;
+  }
+
+  ul {
+    @apply .list-disc .pl-4;
+  }
+
+  blockquote {
+    @apply .border-l-4 .border-pink-600 .pl-4;
+  }
+
+  mark {
+    @apply .bg-pink-200;
+  }
+
+  img {
+    @apply .block;
+  }
+}
