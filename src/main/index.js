@@ -1,6 +1,8 @@
 import { format as formatUrl } from "url"
 import path from "path"
 
+import windowState from "electron-window-state"
+
 const { app, shell, BrowserWindow, Menu } = require("electron")
 const defaultMenu = require("electron-default-menu")
 
@@ -17,17 +19,28 @@ app.on("ready", () => {
     slashes: true,
   })
 
+  const mainWindowState = windowState({
+    defaultWidth: 1200,
+    defaultHeight: 800,
+  })
+
+  const { x, y, width, height } = mainWindowState
+
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    minWidth: 930,
-    minHeight: 400,
+    x,
+    y,
+    width,
+    height,
+    minWidth: 1200,
+    minHeight: 800,
     titleBarStyle: "hiddenInset",
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
     },
   })
+
+  mainWindowState.manage(mainWindow)
 
   mainWindow.loadURL(
     isDevelopment ? __ELECTRON_WEBPACK_DEV_SERVER_URL__ : index,
