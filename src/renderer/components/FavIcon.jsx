@@ -16,12 +16,12 @@ onSnapshot(cache, (snapshot) => {
   localStorage.faviconCache = JSON.stringify(snapshot)
 })
 
-const tryFetch = async (url) => {
+const tryFetchImage = async (url) => {
   try {
-    const res = await fetch(url, {
-      method: "HEAD",
-    })
-    return res.status === 200
+    const res = await fetch(url)
+    return (
+      res.status === 200 && res.headers.get("Content-Type").includes("image")
+    )
   } catch (err) {
     return false
   }
@@ -30,24 +30,22 @@ const tryFetch = async (url) => {
 const match = query(["link[rel*='icon']@href"])
 
 const fetchIcon = async (src) => {
-  if (!cache.has(src)) {
-    cache.set(src, "")
+  cache.set(src, "")
 
-    try {
-      const doc = await scrape(src, "text/html")
-      const matches = match(doc)
+  try {
+    const doc = await scrape(src, "text/html")
+    const matches = match(doc)
 
-      const links = [...matches, new URL("favicon.ico", src).toString()]
+    const links = new Set([...matches, new URL("favicon.ico", src).toString()])
 
-      for (const link of links) {
-        if (await tryFetch(link)) {
-          cache.set(src, link)
-          break
-        }
+    for (const link of links) {
+      if (await tryFetchImage(link)) {
+        cache.set(src, link)
+        break
       }
-    } catch (err) {
-      console.warn(err)
     }
+  } catch (err) {
+    console.warn(err)
   }
 }
 
