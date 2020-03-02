@@ -7,7 +7,6 @@
 @tailwind utilities;
 
 * {
-  user-select: none;
   -webkit-font-smoothing: antialiased;
 }
 

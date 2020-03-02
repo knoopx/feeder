@@ -14,7 +14,10 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
 
   return (
     <div
-      className={classNames("cursor-pointer flex border-b", className)}
+      className={classNames(
+        "cursor-pointer select-none flex border-b",
+        className,
+      )}
       {...props}
     >
       <div

@@ -25,7 +25,7 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
     <div
       ref={ref}
       className={classNames(
-        "max-w-full cursor-pointer px-6  py-3 border-b",
+        "max-w-full cursor-pointer px-6 select-none py-3 border-b",
         className,
         {
           "bg-pink-600 text-white": isActive,

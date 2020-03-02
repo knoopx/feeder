@@ -1,8 +1,4 @@
 .preview {
-  * {
-    user-select: auto !important;
-  }
-
   code {
     font-family: "Monaco";
   }
