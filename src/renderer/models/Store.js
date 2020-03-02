@@ -11,17 +11,11 @@ const disposables = []
 
 export default t
   .model("Store", {
-    activeSource: t.maybeNull(
-      t.reference(Source, {
-        onInvalidated(e) {
-          e.removeRef()
-        },
-      }),
-    ),
     sources: t.optional(t.map(Source), {}),
     concurrency: t.optional(t.number, 4),
     filter: t.optional(t.string, ""),
     mode: t.optional(t.enumeration(["split", "stream"]), "split"),
+    activeSourceIndex: t.optional(t.number, -1),
     activeItem: t.maybeNull(
       t.reference(Item, {
         onInvalidated(e) {
@@ -71,8 +65,8 @@ export default t
         return true
       })
     },
-    get activeSourceIndex() {
-      return self.sortedSources.indexOf(self.activeSource)
+    get activeSource() {
+      return self.sortedSources[self.activeSourceIndex]
     },
     get activeItemIndex() {
       return self.filteredItems.indexOf(self.activeItem)
@@ -125,7 +119,7 @@ export default t
       disposables.forEach((dispose) => dispose())
     },
     setActiveSource(source) {
-      self.activeSource = source
+      self.activeSourceIndex = self.sortedSources.indexOf(source)
     },
     setActiveItem(value) {
       self.activeItem = value
@@ -140,7 +134,7 @@ export default t
     },
     advanceSource(direction) {
       const nextIndex = self.activeSourceIndex + direction
-      if (self.sortedSources[nextIndex]) {
+      if (nextIndex >= -1 && nextIndex < self.sortedSources.length - 1) {
         self.setActiveSource(self.sortedSources[nextIndex])
         return true
       }
