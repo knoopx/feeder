@@ -71,11 +71,11 @@ export default t
         return true
       })
     },
+    get activeSourceIndex() {
+      return self.sortedSources.indexOf(self.activeSource)
+    },
     get activeItemIndex() {
       return self.filteredItems.indexOf(self.activeItem)
-    },
-    calcNextItemIndex(direction) {
-      return self.activeItemIndex + direction
     },
     get notificationCount() {
       return self.sortedSources.reduce(
@@ -131,9 +131,17 @@ export default t
       self.activeItem = value
     },
     advanceItem(direction) {
-      const nextIndex = self.calcNextItemIndex(direction)
+      const nextIndex = self.activeItemIndex + direction
       if (self.filteredItems[nextIndex]) {
         self.setActiveItem(self.filteredItems[nextIndex])
+        return true
+      }
+      return false
+    },
+    advanceSource(direction) {
+      const nextIndex = self.activeSourceIndex + direction
+      if (self.sortedSources[nextIndex]) {
+        self.setActiveSource(self.sortedSources[nextIndex])
         return true
       }
       return false

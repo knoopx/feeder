@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef, useEffect } from "react"
 import { inject, observer } from "mobx-react"
 import { MdError, MdDelete } from "react-icons/md"
 import { Spinner, Badge, FavIcon } from "components"
@@ -7,6 +7,17 @@ import { formatDistance } from "date-fns"
 import { now } from "mobx-utils"
 
 const Source = ({ source, isActive, className, editMode, store, ...props }) => {
+  const ref = useRef()
+
+  useEffect(() => {
+    if (isActive) {
+      ref.current.scrollIntoView({
+        block: "nearest",
+        behavior: "smooth",
+      })
+    }
+  }, [isActive])
+
   const onRemove = (e) => {
     e.stopPropagation()
     store.removeSource(source)
@@ -14,6 +25,7 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
 
   return (
     <div
+      ref={ref}
       className={classNames(
         "cursor-pointer select-none flex border-b",
         className,
