@@ -7,6 +7,11 @@ import { formatDistance } from "date-fns"
 import { now } from "mobx-utils"
 
 const Source = ({ source, isActive, className, editMode, store, ...props }) => {
+  const onRemove = (e) => {
+    e.stopPropagation()
+    store.removeSource(source)
+  }
+
   return (
     <div
       className={classNames("cursor-pointer flex border-b", className)}
@@ -47,10 +52,7 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
           {source.isLoading ? (
             <Spinner size="1.25rem" className="ml-4" />
           ) : editMode ? (
-            <a
-              className="text-gray-600"
-              onClick={() => store.removeSource(source)}
-            >
+            <a className="text-gray-600" onClick={onRemove}>
               <MdDelete size="1.25rem" />
             </a>
           ) : (

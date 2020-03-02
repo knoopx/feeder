@@ -148,6 +148,9 @@ export default t
       self.sources.put(source)
     },
     removeSource(source) {
+      if (self.activeSource === source) {
+        self.setActiveSource(null)
+      }
       destroy(source)
     },
     clearItems() {
