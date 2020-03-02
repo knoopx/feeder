@@ -4,7 +4,6 @@ import { prepDocument, grabArticle, getInnerText } from "support/readability"
 
 const Item = t
   .model("Item", {
-    guid: t.maybeNull(t.string),
     title: t.string,
     author: t.maybeNull(t.string),
     link: t.identifier,

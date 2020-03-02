@@ -8,14 +8,13 @@ const htmlDecode = (input) => {
 }
 
 const parseRSSSource = query({
-  name: "title",
+  title: "title",
   link: "link",
   description: "description",
   language: "language",
 })
 
 const parseRSSItems = query(["item"], {
-  guid: "guid",
   title: "title",
   link: "link",
   author: "author",
@@ -24,15 +23,14 @@ const parseRSSItems = query(["item"], {
 })
 
 const parseAtomSource = query({
-  name: "title",
+  title: "title",
   link: "link",
 })
 
 const parseAtomItems = query(["entry"], {
-  guid: "link:not([rel])@href",
   title: "title",
   link: "link@href",
-  author: "author",
+  author: "author name",
   description: "content",
   publishedAt: query("updated", parseISO),
 })

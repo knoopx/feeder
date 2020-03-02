@@ -30,7 +30,7 @@ export const AddSourcePopover = inject("store")(
         console.log(doc.querySelector(":root").nodeName)
         if (["rss", "feed"].includes(doc.querySelector(":root").nodeName)) {
           store.addSource({
-            name: "Loading...",
+            title: "Loading...",
             href,
           })
           onDismiss()
@@ -38,7 +38,7 @@ export const AddSourcePopover = inject("store")(
           const feeds = findFeeds(doc).map((x) => new URL(x, href).toString())
           if (feeds.length > 0) {
             store.addSource({
-              name: "Loading...",
+              title: "Loading...",
               href: feeds[0],
             })
             onDismiss()

@@ -39,7 +39,7 @@ export const ItemColumn = inject("store")(
                 <div>
                   <div className="flex items-center">
                     <FavIcon className="mr-2" src={item.source.href} />{" "}
-                    {item.source.name}
+                    {item.source.title}
                   </div>
                   {item.author && (
                     <div className="flex items-center pl-2 text-xs whitespace-no-wrap">

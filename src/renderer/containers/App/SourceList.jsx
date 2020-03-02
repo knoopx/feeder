@@ -18,7 +18,7 @@ export const SourceList = inject("store")(
       <div className="flex flex-auto flex-col overflow-auto">
         <Source
           source={{
-            name: "All Sources",
+            title: "All Sources",
             newItemsCount: sumBy(store.allSources, "newItemsCount"),
           }}
           isActive={!store.activeSource}

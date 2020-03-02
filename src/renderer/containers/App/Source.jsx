@@ -54,7 +54,7 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
             ) : (
               <FavIcon className="mr-2" src={source.href} />
             )}
-            <div className="min-w-0 truncate">{source.name}</div>
+            <div className="min-w-0 truncate">{source.title}</div>
           </div>
           {source.updatedAt > 0 && (
             <div className="ml-6 text-gray-600 text-xs">

@@ -4,7 +4,7 @@ import query from "./query"
 import { parse } from "./parse"
 
 const parseSources = query(["outline[type='rss']"], {
-  name: "@title",
+  title: "@title",
   href: "@xmlUrl",
 })
 

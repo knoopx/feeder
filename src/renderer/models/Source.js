@@ -9,7 +9,7 @@ const disposables = []
 
 export default t
   .model("Source", {
-    name: t.string,
+    title: t.string,
     href: t.identifier,
     link: t.maybeNull(t.string),
     description: t.maybeNull(t.string),

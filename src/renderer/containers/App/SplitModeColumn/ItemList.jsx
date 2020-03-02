@@ -43,7 +43,7 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
         {extended && (
           <div className="flex items-center truncate">
             <FavIcon className="mr-1" src={item.source.href} />
-            <div>{item.source.name}</div>
+            <div>{item.source.title}</div>
           </div>
         )}
         <div>
