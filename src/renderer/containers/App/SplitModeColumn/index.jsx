@@ -9,7 +9,7 @@ export const SplitModeColumn = inject("store")(
     <>
       <ItemListColumn className="flex flex-col overflow-auto w-1/4" />
       <ItemColumn
-        key={store.activeItem.key}
+        key={store.activeItem?.key}
         className="flex flex-auto flex-col w-2/4"
       />
     </>
