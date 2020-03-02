@@ -4,6 +4,7 @@ import { inject, observer } from "mobx-react"
 import { formatDistance } from "date-fns"
 import { now } from "mobx-utils"
 import { Indicator, FavIcon } from "components"
+import { useHotkeys } from "react-hotkeys-hook"
 
 const Item = observer(({ item, isActive, className, extended, ...props }) => {
   const ref = useRef()
@@ -63,13 +64,17 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
 })
 
 export const ItemList = inject("store")(
-  observer(({ items, className, store }) => {
+  observer(({ className, extended, store }) => {
+    useHotkeys("up", (e) => store.advanceItem(-1) && e.preventDefault())
+    useHotkeys("down", (e) => store.advanceItem(1) && e.preventDefault())
+
     return (
       <div className={classNames("flex min-w-0 flex-auto flex-col", className)}>
-        {items.map((item) => (
+        {store.filteredItems.map((item) => (
           <Item
-            key={item.link}
+            key={item.key}
             item={item}
+            extended={extended}
             isActive={item === store.activeItem}
             onClick={() => void store.setActiveItem(item)}
           />

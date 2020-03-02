@@ -20,6 +20,9 @@ const Item = t
       const doc = parse(self.description)
       return doc.body.innerText.slice(0, 200)
     },
+    get key() {
+      return [self.source.href, self.link]
+    },
   }))
   .volatile(() => ({
     readableDescription: false,
