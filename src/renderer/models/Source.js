@@ -54,8 +54,13 @@ export default t
     setStatus(status) {
       self.status = status
     },
-    addItem(item) {
-      self.items.put(item)
+    addItem({ guid, ...rest }) {
+      const item = self.items.get(guid)
+      self.items.put({
+        guid,
+        ...item,
+        ...rest,
+      })
     },
     toggleReadability() {
       self.readability = !self.readability
