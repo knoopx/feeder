@@ -35,7 +35,7 @@ export default t
       return values(self.items)
     },
     get updatedAt() {
-      return orderBy(self.allItems, "publishedAt")[0]?.publishedAt || 0
+      return orderBy(self.allItems, "-publishedAt")[0]?.publishedAt || 0
     },
     get newItemsCount() {
       return values(self.items).filter((item) => item.isNew).length
