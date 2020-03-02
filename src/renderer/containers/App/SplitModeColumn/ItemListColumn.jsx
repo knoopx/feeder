@@ -1,17 +1,30 @@
-import React from "react"
+import React, { useRef } from "react"
 import { MdClearAll } from "react-icons/md"
 import { inject, observer } from "mobx-react"
 import { Header } from "components"
+import { useHotkeys } from "react-hotkeys-hook"
 
 import { ItemList } from "./ItemList"
 
 export const ItemListColumn = inject("store")(
   observer(({ store, ...props }) => {
+    const inputRef = useRef()
+
+    useHotkeys("command+f", () => {
+      inputRef.current?.focus()
+    })
+
+    useHotkeys("escape", () => {
+      store.setFilter("")
+      inputRef.current?.blur()
+    })
+
     return (
       <div {...props}>
         <Header className="justify-between border-pink-700 border-r">
           <input
-            className="appearance-none outline-none flex-auto py-1 bg-transparent text-pink-500 placeholder-white"
+            ref={inputRef}
+            className="appearance-none outline-none flex-auto py-1 bg-transparent text-white placeholder-pink-500"
             placeholder="Filter..."
             value={store.filter}
             onChange={(e) => {

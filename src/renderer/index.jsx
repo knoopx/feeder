@@ -3,9 +3,13 @@ import { render } from "react-dom"
 import { Provider } from "mobx-react"
 import { debounce } from "lodash"
 import { onSnapshot } from "mobx-state-tree"
+import hotkeys from "hotkeys-js"
 
 import Store from "./models/Store"
 import App from "./containers/App"
+
+// By default hotkeys are not enabled for INPUT SELECT TEXTAREA elements
+hotkeys.filter = () => true
 
 const store = Store.create(
   localStorage.store ? JSON.parse(localStorage.store) : {},
