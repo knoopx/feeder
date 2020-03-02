@@ -66,6 +66,7 @@ export const AddSourcePopover = inject("store")(
         <form className="flex items-center" onSubmit={onSubmit}>
           {state.isLoading && <Spinner className="mx-2" size="1rem" />}
           <input
+            autoFocus
             className="outline-none px-2 py-1 border rounded"
             value={state.value}
             placeholder="http://example.com"
