@@ -4,10 +4,10 @@ import { prepDocument, grabArticle, getInnerText } from "support/readability"
 
 const Item = t
   .model("Item", {
-    guid: t.identifier,
+    guid: t.maybeNull(t.string),
     title: t.string,
     author: t.maybeNull(t.string),
-    link: t.maybeNull(t.string),
+    link: t.identifier,
     description: t.maybeNull(t.string),
     publishedAt: t.maybeNull(t.Date),
     isNew: t.optional(t.boolean, true),

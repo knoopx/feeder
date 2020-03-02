@@ -54,10 +54,10 @@ export default t
     setStatus(status) {
       self.status = status
     },
-    addItem({ guid, ...rest }) {
-      const item = self.items.get(guid)
+    addItem({ link, ...rest }) {
+      const item = self.items.get(link)
       self.items.put({
-        guid,
+        link,
         ...item,
         ...rest,
       })

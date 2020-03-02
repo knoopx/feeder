@@ -31,7 +31,7 @@ export const Preview = ({ item, className }) => {
   }
 
   return (
-    <div key={item.guid} className={classNames("preview", className)}>
+    <div key={item.link} className={classNames("preview", className)}>
       {processor.processSync(body).contents}
     </div>
   )

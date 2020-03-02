@@ -68,7 +68,7 @@ export const ItemList = inject("store")(
       <div className={classNames("flex min-w-0 flex-auto flex-col", className)}>
         {items.map((item) => (
           <Item
-            key={item.guid}
+            key={item.link}
             item={item}
             isActive={item === store.activeItem}
             onClick={() => void store.setActiveItem(item)}
