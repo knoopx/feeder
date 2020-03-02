@@ -67,8 +67,8 @@ export default t
     },
     fetch: flow(function*() {
       try {
+        self.error = null
         self.setStatus("running")
-
         const { items, source } = yield parseSource(self.href)
 
         try {
