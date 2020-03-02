@@ -47,7 +47,6 @@
     "postcss-nested": "^4.2.1",
     "postcss-simple-vars": "^5.0.2",
     "postcss-smart-import": "^0.7.6",
-    "rambda": "^4.6.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-hotkeys-hook": "^1.5.4",

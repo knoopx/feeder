@@ -6,7 +6,7 @@ import classNames from "classnames"
 import { useSpring, animated } from "react-spring"
 import { scrape } from "support/parse"
 import query from "support/query"
-import * as R from "rambda"
+import { flow, filter, map } from "lodash/fp"
 
 const Store = types.map(types.string)
 const cache = Store.create(JSON.parse(localStorage.faviconCache || "{}"))
@@ -27,16 +27,7 @@ const tryFetch = async (url) => {
   }
 }
 
-const match = R.pipe(
-  query(["link"]),
-  R.filter(
-    R.pipe(
-      R.map(R.prop("rel")),
-      (rel) => ["apple-touch-icon", "shortcut icon", "icon"].includes(rel),
-    ),
-  ),
-  R.map(R.prop("href")),
-)
+const match = query(["link[rel*='icon']@href"])
 
 const fetchIcon = async (src) => {
   if (!cache.has(src)) {
