@@ -45,9 +45,9 @@ export default t
     get sortedSources() {
       return orderBy(self.allSources, "updatedAt", "desc")
     },
-    get allItems() {
+    get sortedItems() {
       if (self.activeSource) {
-        return self.activeSource.allItems
+        return self.activeSource.sortedItems
       }
 
       return orderBy(
@@ -58,7 +58,7 @@ export default t
     },
     get filteredItems() {
       const regex = new RegExp(self.filter, "i")
-      return self.allItems.filter((item) => {
+      return self.sortedItems.filter((item) => {
         if (self.filter.length > 0) {
           return Object.values(item).some((x) => regex.test(x))
         }
@@ -156,7 +156,7 @@ export default t
       destroy(source)
     },
     clearItems() {
-      self.allItems.forEach((x) => x.markAsRead())
+      self.sortedItems.forEach((x) => x.markAsRead())
     },
     fetchSources() {
       self.sortedSources.forEach((source) => {

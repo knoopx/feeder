@@ -34,8 +34,11 @@ export default t
     get allItems() {
       return values(self.items)
     },
+    get sortedItems() {
+      return orderBy(self.allItems, "-publishedAt")
+    },
     get updatedAt() {
-      return orderBy(self.allItems, "-publishedAt")[0]?.publishedAt || 0
+      return self.sortedItems[0]?.publishedAt || 0
     },
     get newItemsCount() {
       return values(self.items).filter((item) => item.isNew).length
@@ -49,7 +52,7 @@ export default t
       Object.assign(self, snapshot)
     },
     clearItems() {
-      self.allItems.forEach((x) => x.markAsRead())
+      self.sortedItems.forEach((x) => x.markAsRead())
     },
     setStatus(status) {
       self.status = status
