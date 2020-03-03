@@ -1,5 +1,8 @@
 appId: net.knoopx.Feeder
 productName: Feeder
+publish:
+  provider: github
+  releaseType: release
 directories:
   output: release
 files:

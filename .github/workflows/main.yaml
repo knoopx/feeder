@@ -36,19 +36,13 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git fetch --prune --unshallow
-        sudo snap install hub --classic
         sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install -y wine32 wine-stable
 
     - name: build
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         yarn install
         npx standard-version
-        yarn release:all
         git push --follow-tags origin master
-
-        assets=()
-        tag=$(git describe --tags --abbrev=0)
-        for f in release/Feeder*; do [ -f "$f" ] && assets+=(-a "$f"); done
-        hub release create $tag -m "Release $tag" "${assets[@]}"
+        yarn release:all
