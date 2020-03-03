@@ -53,6 +53,7 @@
     "react-icons": "^3.9.0",
     "react-refresh": "^0.8.0",
     "react-spring": "^8.0.27",
+    "readability": "github:mozilla/readability",
     "rehype-highlight": "^3.1.0",
     "rehype-parse": "^6.0.2",
     "rehype-react": "^4.0.1",

@@ -5973,6 +5973,10 @@ read-config-file@5.0.1:
     json5 "^2.1.1"
     lazy-val "^1.0.4"
 
+"readability@github:mozilla/readability":
+  version "0.2.0"
+  resolved "https://codeload.github.com/mozilla/readability/tar.gz/dc34dfd8fa6d5c17801efbc2e115dc368b7117c8"
+
 "readable-stream@1 || 2", readable-stream@^2.0.0, readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@^2.3.3, readable-stream@^2.3.6, readable-stream@~2.3.6:
   version "2.3.7"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.7.tgz#1eca1cf711aef814c04f62252a36a62f6cb23b57"
