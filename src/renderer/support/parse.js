@@ -31,8 +31,9 @@ export const parse = (string, type = "text/html", base) => {
 export const scrape = async (url) => {
   const res = await fetch(url)
   const body = await res.text()
-  const type = res.headers.get("Content-Type").includes("html")
-    ? "text/html"
-    : "text/xml"
+  let type = "text/html"
+  if (res.headers.get("Content-Type")?.includes("xml")) {
+    type = "text/xml"
+  }
   return parse(body, type, url)
 }
