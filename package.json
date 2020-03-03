@@ -12,7 +12,7 @@
     "compile:renderer": "webpack-cli --mode production --config webpack.renderer.config.js",
     "compile": "yarn compile:main && yarn compile:renderer",
     "release": "yarn compile && electron-builder",
-    "release:all": "yarn compile && electron-builder -mwl --publish always"
+    "release:all": "yarn compile && electron-builder -mwl --publish always -c.snap.publish=github"
   },
   "dependencies": {
     "electron-default-menu": "^1.0.1"

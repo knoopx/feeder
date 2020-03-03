@@ -44,6 +44,6 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         yarn install
-        npx standard-version
+        npx standard-version@7.1.0
         git push --follow-tags origin master
         yarn release:all
