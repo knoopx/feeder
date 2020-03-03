@@ -15,7 +15,7 @@ const processor = unified()
   .use(rehype2react, { createElement })
 
 export const Preview = ({ item, className }) => {
-  let body = absolutize(parseDocument(item.description), item.source.href).body
+  let body = absolutize(parseDocument(item.description), item.link).body
     .innerHTML
 
   if (item.source.readability) {
