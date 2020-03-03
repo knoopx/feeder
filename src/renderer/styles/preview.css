@@ -1,14 +1,11 @@
 .preview {
-  code {
-    font-family: "Monaco";
-  }
 
   :not(pre) > code {
-    @apply .bg-gray-200 .rounded .px-2 .py-1 .text-xs .mx-1;
+    @apply .bg-gray-200 .rounded .px-2 .py-1 .mx-1 .text-xs;
   }
 
   pre {
-    @apply .leading-tight .text-sm .overflow-auto;
+    @apply .leading-tight .text-xs .overflow-auto .font-mono;
   }
 
   p,
