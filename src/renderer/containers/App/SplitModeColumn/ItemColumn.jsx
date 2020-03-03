@@ -1,9 +1,7 @@
 import React, { useEffect } from "react"
 import { inject, observer } from "mobx-react"
-import { Header, FavIcon, Preview } from "components"
+import { Header, FavIcon, Preview, TimeAgo } from "components"
 import { MdOpenInBrowser, MdPerson, MdWeekend } from "react-icons/md"
-import { formatDistance } from "date-fns"
-import { now } from "mobx-utils"
 
 export const ItemColumn = inject("store")(
   observer(({ store: { activeItem: item }, ...props }) => {
@@ -48,9 +46,10 @@ export const ItemColumn = inject("store")(
                     </div>
                   )}
                 </div>
-                <div className="flex flex-col text-right text-sm">
-                  {formatDistance(item.publishedAt, now(), { addSuffix: true })}
-                </div>
+                <TimeAgo
+                  className="flex flex-col text-right text-sm"
+                  since={item.publishedAt}
+                />
               </div>
 
               <div className="text-2xl font-medium leading-none">

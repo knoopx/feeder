@@ -1,8 +1,6 @@
 import React, { useRef, useEffect } from "react"
 import { inject, observer } from "mobx-react"
-import { formatDistance } from "date-fns"
-import { now } from "mobx-utils"
-import { Indicator, FavIcon } from "components"
+import { Indicator, FavIcon, TimeAgo } from "components"
 import { useHotkeys } from "react-hotkeys-hook"
 
 const Item = observer(({ item, isActive, className, extended, ...props }) => {
@@ -47,9 +45,7 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
             <div>{item.source.title}</div>
           </div>
         )}
-        <div>
-          {formatDistance(item.publishedAt, now(), { addSuffix: true })}
-        </div>
+        <TimeAgo since={item.publishedAt} />
       </div>
       <div className="mb-2 font-medium leading-none">
         {item.isNew && <Indicator className="-ml-4 mr-1" />} {item.title}

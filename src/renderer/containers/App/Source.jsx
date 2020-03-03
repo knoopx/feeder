@@ -1,9 +1,7 @@
 import React, { useRef, useEffect } from "react"
 import { inject, observer } from "mobx-react"
 import { MdError, MdDelete } from "react-icons/md"
-import { Spinner, Badge, FavIcon } from "components"
-import { formatDistance } from "date-fns"
-import { now } from "mobx-utils"
+import { Spinner, Badge, FavIcon, TimeAgo } from "components"
 
 const Source = ({ source, isActive, className, editMode, store, ...props }) => {
   const ref = useRef()
@@ -56,9 +54,10 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
             <div className="min-w-0 truncate">{source.title}</div>
           </div>
           {source.updatedAt > 0 && (
-            <div className="ml-6 text-gray-600 text-xs">
-              {formatDistance(source.updatedAt, now(), { addSuffix: true })}
-            </div>
+            <TimeAgo
+              className="ml-6 text-gray-600 text-xs"
+              since={source.updatedAt}
+            />
           )}
         </div>
 
