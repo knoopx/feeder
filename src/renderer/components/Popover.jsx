@@ -1,6 +1,5 @@
 import React, { useRef } from "react"
 import ReactDOM from "react-dom"
-import classNames from "classnames"
 import { animated, useSpring } from "react-spring"
 import { usePopper, useOnClickOutside } from "hooks"
 import { useHotkeys } from "react-hotkeys-hook"
@@ -59,7 +58,7 @@ export const Popover = ({
           (x) => `${popperStyle.transform} ${x}`,
         ),
       }}
-      className={classNames("popover", popperPlacement, className)}
+      className={["popover", popperPlacement, className]}
     >
       {children}
       <div className="arrow" ref={arrowRef} style={arrowStyle} />

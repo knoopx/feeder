@@ -1,5 +1,4 @@
 import React, { createElement } from "react"
-import classNames from "classnames"
 import { Spinner } from "components"
 import parse from "rehype-parse"
 import unified from "unified"
@@ -33,7 +32,7 @@ export const Preview = ({ item, className }) => {
   }
 
   return (
-    <div className={classNames("preview", className)}>
+    <div className={["preview", className]}>
       {processor.processSync(body).contents}
     </div>
   )

@@ -62,7 +62,10 @@ module.exports = {
               ],
               "@babel/preset-react",
             ],
-            plugins: [isDevelopment && "react-refresh/babel"].filter(Boolean),
+            plugins: [
+              "@knoopx/babel-plugin-jsx-classnames",
+              isDevelopment && "react-refresh/babel",
+            ].filter(Boolean),
           },
         },
       },

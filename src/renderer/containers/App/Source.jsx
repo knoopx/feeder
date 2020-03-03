@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from "react"
 import { inject, observer } from "mobx-react"
 import { MdError, MdDelete } from "react-icons/md"
 import { Spinner, Badge, FavIcon } from "components"
-import classNames from "classnames"
 import { formatDistance } from "date-fns"
 import { now } from "mobx-utils"
 
@@ -26,25 +25,25 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
   return (
     <div
       ref={ref}
-      className={classNames(
-        "cursor-pointer select-none flex border-b",
-        className,
-      )}
+      className={["cursor-pointer select-none flex border-b", className]}
       {...props}
     >
       <div
-        className={classNames(
-          "flex min-w-0 flex-auto items-center px-4  h-12",
+        className={[
+          "flex flex-auto items-center h-12 min-w-0 px-4",
           {
             "border-l-4 border-pink-600": isActive,
             "bg-red-100": source.error,
           },
-        )}
+        ]}
       >
         <div
-          className={classNames("flex flex-auto flex-col max-w-full min-w-0", {
-            "font-semibold": isActive,
-          })}
+          className={[
+            "flex flex-auto flex-col max-w-full min-w-0",
+            {
+              "font-semibold": isActive,
+            },
+          ]}
         >
           <div className="flex flex-auto items-center">
             {source.error ? (
@@ -72,7 +71,7 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
             </a>
           ) : (
             source.newItemsCount > 0 && (
-              <Badge className={classNames("ml-4 text-gray-600")}>
+              <Badge className={["ml-4 text-gray-600"]}>
                 {source.newItemsCount}
               </Badge>
             )

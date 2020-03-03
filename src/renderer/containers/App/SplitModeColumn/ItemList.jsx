@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from "react"
-import classNames from "classnames"
 import { inject, observer } from "mobx-react"
 import { formatDistance } from "date-fns"
 import { now } from "mobx-utils"
@@ -17,28 +16,30 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
       })
   }, [isActive, ref.current])
 
-  const textGray = classNames({
-    "text-pink-300": isActive,
-    "text-gray-600": !isActive,
-  })
+  const textGray = [
+    {
+      "text-pink-300": isActive,
+      "text-gray-600": !isActive,
+    },
+  ]
 
   return (
     <div
       ref={ref}
-      className={classNames(
-        "max-w-full cursor-pointer px-6 select-none py-3 border-b",
+      className={[
+        "cursor-pointer select-none max-w-full px-6 py-3 border-b",
         className,
         {
           "bg-pink-600 text-white": isActive,
         },
-      )}
+      ]}
       {...props}
     >
       <div
-        className={classNames(
-          "mb-1 flex justify-between text-xs whitespace-no-wrap",
+        className={[
+          "flex justify-between mb-1 text-xs whitespace-no-wrap",
           textGray,
-        )}
+        ]}
       >
         {extended && (
           <div className="flex items-center truncate">
@@ -53,12 +54,9 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
       <div className="mb-2 font-medium leading-none">
         {item.isNew && <Indicator className="-ml-4 mr-1" />} {item.title}
       </div>
-      <div
-        className={classNames("text-sm leading-tight truncate-2", textGray)}
-        dangerouslySetInnerHTML={{
-          __html: item.summary,
-        }}
-      />
+      <div className={["text-sm leading-tight truncate-2", textGray]}>
+        {item.summary}
+      </div>
     </div>
   )
 })
@@ -69,7 +67,7 @@ export const ItemList = inject("store")(
     useHotkeys("down", (e) => store.advanceItem(1) && e.preventDefault())
 
     return (
-      <div className={classNames("flex min-w-0 flex-auto flex-col", className)}>
+      <div className={["flex flex-auto flex-col min-w-0", className]}>
         {store.filteredItems.map((item) => (
           <Item
             key={item.key}

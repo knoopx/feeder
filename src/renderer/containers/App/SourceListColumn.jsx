@@ -8,18 +8,13 @@ import {
 } from "react-icons/md"
 import { Header } from "components"
 import { inject, observer, useLocalStore } from "mobx-react"
-import classNames from "classnames"
 
 import { AddSourcePopover } from "./AddSourcePopover"
 import { SourceList } from "./SourceList"
 
 const Button = forwardRef(({ className, ...props }, ref) => {
   return (
-    <a
-      ref={ref}
-      className={classNames("cursor-pointer block", className)}
-      {...props}
-    />
+    <a ref={ref} className={["cursor-pointer block", className]} {...props} />
   )
 })
 
@@ -87,9 +82,12 @@ export const SourceListColumn = inject("store")(
             </Button>
 
             <Button
-              className={classNames("mr-4 pr-4 border-pink-500 border-r", {
-                "text-white": state.isEditing,
-              })}
+              className={[
+                "mr-4 pr-4 border-pink-500 border-r",
+                {
+                  "text-white": state.isEditing,
+                },
+              ]}
               onClick={onToggleEdit}
             >
               <MdModeEdit size="1.25rem" />

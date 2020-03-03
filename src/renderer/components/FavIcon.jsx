@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react"
 import { types, unprotect, onSnapshot } from "mobx-state-tree"
 import { observer } from "mobx-react"
 import { MdRssFeed } from "react-icons/md"
-import classNames from "classnames"
 import { useSpring, animated } from "react-spring"
 import { scrape } from "support/parse"
 import query from "domqs"
@@ -74,15 +73,13 @@ export const FavIcon = observer(({ src, className, ...props }) => {
   })
 
   if (!iconSrc) {
-    return (
-      <Placeholder className={classNames("h-4 w-4", className)} {...props} />
-    )
+    return <Placeholder className={["h-4 w-4", className]} {...props} />
   }
 
   return (
     <animated.img
       {...props}
-      className={classNames("h-4 w-4", className)}
+      className={["h-4 w-4", className]}
       // style={imgSpring}
       src={iconSrc}
       // src={`https://api.statvoo.com/favicon/?url=${origin}`}

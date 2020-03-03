@@ -818,6 +818,11 @@
     postcss "7.0.27"
     purgecss "^2.1.0"
 
+"@knoopx/babel-plugin-jsx-classnames@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@knoopx/babel-plugin-jsx-classnames/-/babel-plugin-jsx-classnames-1.2.0.tgz#0bffc4ee56be210db37c863233a8cb779fa28800"
+  integrity sha512-gEf56ivVEboFnnVV6ogCEsv7tcSXXbG2/n5jQUJMl0anYdt/BtNv1Jvebvmxd1XEeA6uW9kCCYp+bQRD8xk6gw==
+
 "@mapbox/hast-util-table-cell-style@^0.1.3":
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/@mapbox/hast-util-table-cell-style/-/hast-util-table-cell-style-0.1.3.tgz#5b7166ae01297d72216932b245e4b2f0b642dca6"

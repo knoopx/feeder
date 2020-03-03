@@ -1,5 +1,4 @@
 import React from "react"
-import classNames from "classnames"
 import { inject, observer } from "mobx-react"
 import { sumBy } from "lodash"
 import { useHotkeys } from "react-hotkeys-hook"

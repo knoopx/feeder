@@ -1,5 +1,4 @@
 import React, { useEffect } from "react"
-import classNames from "classnames"
 import { inject, observer } from "mobx-react"
 import { Header, FavIcon, Preview } from "components"
 import { MdOpenInBrowser, MdPerson, MdWeekend } from "react-icons/md"
@@ -19,9 +18,11 @@ export const ItemColumn = inject("store")(
             <>
               <a
                 onClick={() => item.source.toggleReadability()}
-                className={classNames({
-                  "text-white": item.source.readability,
-                })}
+                className={[
+                  {
+                    "text-white": item.source.readability,
+                  },
+                ]}
               >
                 <MdWeekend size="1.25rem" />
               </a>
