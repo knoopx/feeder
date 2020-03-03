@@ -14,6 +14,12 @@ const absolutizeProp = (prop, base) => (doc) => {
 
 export const absolutize = (doc, base) => {
   // todo: srcset
+
+  // fix lazy-loaded images
+  Array.from(doc.querySelectorAll("[data-src]")).forEach((node) => {
+    node.attributes.src.value = node.attributes["data-src"].value
+  })
+
   absolutizeProp("src", base)(doc)
   absolutizeProp("href", base)(doc)
   return doc
