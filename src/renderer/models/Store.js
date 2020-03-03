@@ -88,7 +88,7 @@ export default t
 
       disposables.push(
         autorun(() => {
-          self.setActiveItem(self.allItems[0])
+          self.setActiveItem(self.sortedItems[0])
         }),
       )
 
