@@ -1,6 +1,6 @@
 import { types as t, flow, getParent } from "mobx-state-tree"
 import { parse, scrape } from "support/parse"
-import { prepDocument, grabArticle, getInnerText } from "support/readability"
+import { grabArticle } from "support/readability"
 
 const Item = t
   .model("Item", {
@@ -32,7 +32,6 @@ const Item = t
     },
     makeReadable: flow(function*() {
       const doc = yield scrape(self.link)
-      prepDocument(doc)
       const content = grabArticle(doc)
       self.readableDescription = content.innerHTML
     }),

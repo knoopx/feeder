@@ -21,50 +21,6 @@ export const setCleanRules = (rules) => {
   cleanRules = rules;
 };
 
-/**
- * Prepare the HTML document for readability to scrape it.
- * This includes things like stripping javascript, CSS, and handling terrible markup.
- *
- * @return void
- **/
-export const prepDocument = (document) => {
-  var frames = document.getElementsByTagName('frame');
-  if (frames.length > 0) {
-    var bestFrame = null;
-    var bestFrameSize = 0;
-
-    Array.prototype.slice.call(frames, 0).forEach((frame) => {
-      var frameSize = frame.offsetWidth + frame.offsetHeight;
-      var canAccessFrame = false;
-      try {
-        frame.contentWindow.document.body;
-        canAccessFrame = true;
-      } catch (e) {}
-
-      if (canAccessFrame && frameSize > bestFrameSize) {
-        bestFrame = frame;
-        bestFrameSize = frameSize;
-      }
-    });
-
-    if (bestFrame) {
-      var newBody = document.createElement('body');
-      newBody.innerHTML = bestFrame.contentWindow.document.body.innerHTML;
-      newBody.style.overflow = 'scroll';
-      document.body = newBody;
-
-      var frameset = document.getElementsByTagName('frameset')[0];
-      if (frameset) {
-        frameset.parentNode.removeChild(frameset);
-      }
-    }
-  }
-
-  // turn all double br's into p's
-  // note, this is pretty costly as far as processing goes. Maybe optimize later.
-  // document.body.innerHTML = document.body.innerHTML.replace(regexps.replaceBrsRe, '</p><p>').replace(regexps.replaceFontsRe, '<$1span>');
-};
-
 /***
  * grabArticle - Using a variety of metrics (content score, classname, element types), find the content that is
  *               most likely to be the stuff a user wants to read. Then return it wrapped up in a div.
