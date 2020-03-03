@@ -1,6 +1,7 @@
 import fs from "fs"
 
-import query from "./query"
+import query from "domqs"
+
 import { parse } from "./parse"
 
 const parseSources = query(["outline[type='rss']"], {

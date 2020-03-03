@@ -5,7 +5,7 @@ import { MdRssFeed } from "react-icons/md"
 import classNames from "classnames"
 import { useSpring, animated } from "react-spring"
 import { scrape } from "support/parse"
-import query from "support/query"
+import query from "domqs"
 import { flow, filter, map } from "lodash/fp"
 
 const Store = types.map(types.string)

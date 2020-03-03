@@ -1,4 +1,4 @@
-import query from "support/query"
+import query from "domqs"
 import { parse, scrape } from "support/parse"
 import { parseISO } from "date-fns"
 

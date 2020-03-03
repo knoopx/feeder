@@ -2,7 +2,7 @@ import React from "react"
 import { Popover, Spinner } from "components"
 import { inject, observer, useLocalStore } from "mobx-react"
 import { scrape } from "support/parse"
-import query from "support/query"
+import query from "domqs"
 import { MdError } from "react-icons/md"
 
 const findFeeds = query(["link[type='application/rss+xml']@href"])

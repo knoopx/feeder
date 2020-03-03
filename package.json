@@ -28,6 +28,7 @@
     "core-js": "^3.6.4",
     "css-loader": "^3.4.2",
     "date-fns": "^2.10.0",
+    "domqs": "github:knoopx/domqs",
     "electron": "^8.0.2",
     "electron-builder": "^22.3.2",
     "electron-webpack-dev-server": "knoopx/electron-webpack-dev-server",
