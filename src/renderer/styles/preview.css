@@ -13,9 +13,11 @@
 
   p,
   pre,
-  img,
   blockquote,
+  table,
   ul,
+  ol,
+  caption,
   h1,
   h2,
   h3,
@@ -70,12 +72,21 @@
     @apply .text-lg;
   }
 
+  ul,
+  ol {
+    @apply .pl-4;
+  }
+
   ul {
-    @apply .list-disc .pl-4;
+    @apply .list-disc;
+  }
+
+  ol {
+    @apply .list-decimal;
   }
 
   blockquote {
-    @apply .border-l-4 .border-pink-600 .pl-4;
+    @apply .border-l-4 .border-pink-600 .px-4 .italic .bg-pink-100 .py-2;
   }
 
   mark {
@@ -83,6 +94,46 @@
   }
 
   img {
-    @apply .block;
+    @apply .inline-block;
+  }
+
+  caption {
+    @apply .text-sm .text-gray-600;
+  }
+
+  table,
+  blockquote,
+  ol,
+  ul {
+    p:last-child {
+      @apply .mb-0;
+    }
+  }
+
+  table {
+    @apply .border-separate .rounded .border .overflow-auto .text-sm;
+
+    border-spacing: 0;
+
+    tr th,
+    tr td {
+      @apply .border-r .border-b;
+
+      &:last-child {
+        @apply .border-r-0;
+      }
+    }
+
+    tbody tr:last-child {
+      td,
+      th {
+        @apply .border-b-0;
+      }
+    }
+
+    th,
+    td {
+      @apply .px-2 .py-1;
+    }
   }
 }
