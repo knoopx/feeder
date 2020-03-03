@@ -1,10 +1,7 @@
 const absolutizeProp = (prop, base) => (doc) => {
   Array.from(doc.querySelectorAll(`[${prop}]`)).forEach((node) => {
     try {
-      node.attributes[prop].value = new URL(
-        node.attributes[prop].value,
-        base,
-      ).toString()
+      node.setAttribute(prop, new URL(node.getAttribute(prop), base).toString())
     } catch (err) {
       console.warn(err)
     }
@@ -17,7 +14,7 @@ export const absolutize = (doc, base) => {
 
   // fix lazy-loaded images
   Array.from(doc.querySelectorAll("[data-src]")).forEach((node) => {
-    node.attributes.src.value = node.attributes["data-src"].value
+    node.setAttribute("src", node.getAttribute("data-src"))
   })
 
   absolutizeProp("src", base)(doc)
