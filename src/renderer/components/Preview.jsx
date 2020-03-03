@@ -6,15 +6,17 @@ import unified from "unified"
 import sanitize from "rehype-sanitize"
 import highlight from "rehype-highlight"
 import rehype2react from "rehype-react"
+import { parse as parseDocument, absolutize } from "support/parse"
 
 const processor = unified()
-  .use(parse, { emitParseErrors: true, duplicateAttribute: false })
+  .use(parse, { emitParseErrors: false, duplicateAttribute: false })
   .use(sanitize)
   .use(highlight, { subset: ["javascript", "ruby", "css"] })
   .use(rehype2react, { createElement })
 
 export const Preview = ({ item, className }) => {
-  let body = item.description
+  let body = absolutize(parseDocument(item.description), item.source.href).body
+    .innerHTML
 
   if (item.source.readability) {
     if (!item.readableDescription) {
