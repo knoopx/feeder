@@ -11,7 +11,7 @@ import { parse as parseDocument, absolutize } from "support/parse"
 const processor = unified()
   .use(parse, { emitParseErrors: false, duplicateAttribute: false })
   .use(sanitize)
-  .use(highlight, { subset: ["javascript", "ruby", "css"] })
+  .use(highlight)
   .use(rehype2react, { createElement })
 
 export const Preview = ({ item, className }) => {
