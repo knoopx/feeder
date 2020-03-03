@@ -17,6 +17,8 @@ const isDevelopment = process.env.WEBPACK_DEV_SERVER === "true"
 
 module.exports = {
   target: "electron-renderer",
+  devtool: "eval-source-map",
+  mode: isDevelopment ? "development" : "production",
   output: {
     path: path.resolve(__dirname, "dist/electron"),
   },
