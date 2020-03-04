@@ -36,10 +36,13 @@ export default t
       return values(self.items)
     },
     get sortedItems() {
-      return orderBy(self.allItems, "-publishedAt")
+      return orderBy(self.allItems, ["publishedAt"], ["desc"])
+    },
+    get lastPublishedAt() {
+      return self.sortedItems[0]?.publishedAt
     },
     get updatedAt() {
-      return self.sortedItems[0]?.publishedAt || 0
+      return self.lastPublishedAt || self.clearedAt || 0
     },
     get newItemsCount() {
       return values(self.items).filter((item) => item.isNew).length
@@ -53,7 +56,9 @@ export default t
       Object.assign(self, snapshot)
     },
     clearItems() {
-      self.clearedAt = new Date()
+      if (self.lastPublishedAt) {
+        self.clearedAt = self.lastPublishedAt
+      }
       self.allItems.forEach((item) => {
         destroy(item)
       })

@@ -1,5 +1,5 @@
 import { values, autorun } from "mobx"
-import { orderBy, flatten, map } from "lodash"
+import { sumBy, max, map, orderBy, flatten } from "lodash"
 import { types as t, destroy } from "mobx-state-tree"
 import { remote } from "electron"
 import { parseOPML } from "support/opml"
@@ -25,6 +25,12 @@ export default t
     ),
   })
   .views((self) => ({
+    get newItemsCount() {
+      return sumBy(self.allSources, "newItemsCount")
+    },
+    get updatedAt() {
+      return max(map(self.allSources, "updatedAt"))
+    },
     get pending() {
       return self.allSources.filter((source) => source.status === "pending")
     },
@@ -42,19 +48,26 @@ export default t
     get allSources() {
       return values(self.sources)
     },
+    get allSourceItems() {
+      return orderBy(
+        flatten(map(self.allSources, "allItems")),
+        "publishedAt",
+        "desc",
+      )
+    },
     get sortedSources() {
-      return orderBy(self.allSources, "updatedAt", "desc")
+      return orderBy(
+        self.allSources,
+        ["updatedAt", "newItemsCount", "title"],
+        ["desc", "desc", "asc"],
+      )
     },
     get sortedItems() {
       if (self.activeSource) {
         return self.activeSource.sortedItems
       }
 
-      return orderBy(
-        flatten(map(self.allSources, "allItems")),
-        "publishedAt",
-        "desc",
-      )
+      return self.allSourceItems
     },
     get filteredItems() {
       const regex = new RegExp(self.filter, "i")
@@ -71,18 +84,12 @@ export default t
     get activeItemIndex() {
       return self.filteredItems.indexOf(self.activeItem)
     },
-    get notificationCount() {
-      return self.sortedSources.reduce(
-        (count, source) => count + source.newItemsCount,
-        0,
-      )
-    },
   }))
   .actions((self) => ({
     afterCreate() {
       disposables.push(
         autorun(() => {
-          remote.app.badgeCount = self.notificationCount
+          remote.app.badgeCount = self.newItemsCount
         }),
       )
 

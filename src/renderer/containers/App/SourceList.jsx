@@ -18,7 +18,8 @@ export const SourceList = inject("store")(
         <Source
           source={{
             title: "All Sources",
-            newItemsCount: sumBy(store.allSources, "newItemsCount"),
+            updatedAt: store.updatedAt,
+            newItemsCount: store.newItemsCount,
           }}
           isActive={!store.activeSource}
           onClick={() => store.setActiveSource(null)}
