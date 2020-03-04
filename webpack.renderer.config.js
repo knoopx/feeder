@@ -88,7 +88,7 @@ module.exports = {
             loader: "postcss-loader",
             options: {
               plugins: [
-                require("postcss-smart-import"),
+                require("postcss-import")(),
                 require("postcss-nested"),
                 require("postcss-simple-vars"),
                 require("tailwindcss"),
