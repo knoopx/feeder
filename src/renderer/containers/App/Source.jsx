@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react"
 import { inject, observer } from "mobx-react"
 import { MdError, MdDelete } from "react-icons/md"
-import { Spinner, Badge, FavIcon, TimeAgo } from "components"
+import { Spinner, AnimatedBadge, FavIcon, TimeAgo } from "components"
 
 const Source = ({ source, isActive, className, editMode, store, ...props }) => {
   const ref = useRef()
@@ -70,9 +70,10 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
             </a>
           ) : (
             source.newItemsCount > 0 && (
-              <Badge className={["ml-4 text-gray-600"]}>
-                {source.newItemsCount}
-              </Badge>
+              <AnimatedBadge
+                className={["ml-4 text-gray-600"]}
+                value={source.newItemsCount}
+              />
             )
           )}
         </div>
