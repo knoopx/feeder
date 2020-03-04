@@ -1,7 +1,7 @@
 import React, { useRef } from "react"
 import { MdClearAll } from "react-icons/md"
 import { inject, observer } from "mobx-react"
-import { Header } from "components"
+import { Header, HeaderButton } from "components"
 import { useHotkeys } from "react-hotkeys-hook"
 
 import { ItemList } from "./ItemList"
@@ -24,7 +24,7 @@ export const ItemListColumn = inject("store")(
         <Header className="justify-between border-pink-700 border-r">
           <input
             ref={inputRef}
-            className="appearance-none outline-none flex-auto py-1 bg-transparent text-white placeholder-pink-500"
+            className="appearance-none outline-none flex-auto mr-2 py-1 bg-transparent text-white placeholder-pink-500"
             placeholder="Filter..."
             value={store.filter}
             onChange={(e) => {
@@ -32,12 +32,9 @@ export const ItemListColumn = inject("store")(
             }}
           />
           <div className="flex items-center">
-            <a
-              className="cursor-pointer mx-1 text-pink-500"
-              onClick={store.clearItems}
-            >
+            <HeaderButton onClick={store.clearItems}>
               <MdClearAll size="1.25rem" />
-            </a>
+            </HeaderButton>
           </div>
         </Header>
 

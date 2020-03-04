@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { inject, observer } from "mobx-react"
-import { Header, FavIcon, Preview, TimeAgo } from "components"
+import { Header, HeaderButton, FavIcon, Preview, TimeAgo } from "components"
 import { MdOpenInBrowser, MdPerson, MdWeekend } from "react-icons/md"
 
 export const ItemColumn = inject("store")(
@@ -14,7 +14,7 @@ export const ItemColumn = inject("store")(
         <Header className="justify-between">
           {item && (
             <>
-              <a
+              <HeaderButton
                 onClick={() => item.source.toggleReadability()}
                 className={[
                   {
@@ -23,11 +23,11 @@ export const ItemColumn = inject("store")(
                 ]}
               >
                 <MdWeekend size="1.25rem" />
-              </a>
+              </HeaderButton>
 
-              <a href={item.link}>
+              <HeaderButton href={item.link}>
                 <MdOpenInBrowser size="1.25rem" />
-              </a>
+              </HeaderButton>
             </>
           )}
         </Header>

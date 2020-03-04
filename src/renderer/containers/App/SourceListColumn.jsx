@@ -6,17 +6,11 @@ import {
   MdModeEdit,
   MdAddCircle,
 } from "react-icons/md"
-import { Header } from "components"
+import { Header, HeaderButton } from "components"
 import { inject, observer, useLocalStore } from "mobx-react"
 
 import { AddSourcePopover } from "./AddSourcePopover"
 import { SourceList } from "./SourceList"
-
-const Button = forwardRef(({ className, ...props }, ref) => {
-  return (
-    <a ref={ref} className={["cursor-pointer block", className]} {...props} />
-  )
-})
 
 export const SourceListColumn = inject("store")(
   observer(({ store, ...props }) => {
@@ -63,9 +57,9 @@ export const SourceListColumn = inject("store")(
       <div {...props}>
         <Header className="pl-20 border-pink-700 border-r">
           <div className="flex flex-auto items-center justify-end">
-            <Button ref={ref} className="mr-2" onClick={onAdd}>
+            <HeaderButton ref={ref} className="mr-2" onClick={onAdd}>
               <MdAddCircle size="1.25rem" />
-            </Button>
+            </HeaderButton>
             {state.isPopoverOpen && (
               <AddSourcePopover
                 referenceElement={ref}
@@ -74,14 +68,14 @@ export const SourceListColumn = inject("store")(
                 }}
               />
             )}
-            <Button
+            <HeaderButton
               className="mr-4 pr-4 border-pink-500 border-r"
               onClick={onImport}
             >
               <MdFileDownload size="1.25rem" />
-            </Button>
+            </HeaderButton>
 
-            <Button
+            <HeaderButton
               className={[
                 "mr-4 pr-4 border-pink-500 border-r",
                 {
@@ -91,11 +85,11 @@ export const SourceListColumn = inject("store")(
               onClick={onToggleEdit}
             >
               <MdModeEdit size="1.25rem" />
-            </Button>
+            </HeaderButton>
 
-            <Button onClick={onRefresh}>
+            <HeaderButton onClick={onRefresh}>
               <MdRefresh size="1.25rem" />
-            </Button>
+            </HeaderButton>
           </div>
         </Header>
 
