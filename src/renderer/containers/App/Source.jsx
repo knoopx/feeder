@@ -28,7 +28,7 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
     >
       <div
         className={[
-          "flex flex-auto items-center h-12 min-w-0 px-4",
+          "flex flex-auto items-center h-16 min-w-0 px-4",
           {
             "border-l-4 border-pink-600": isActive,
             "bg-red-100": source.error,
