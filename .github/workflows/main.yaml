@@ -35,7 +35,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+        git fetch origin +refs/tags/*:refs/tags/*
         sudo snap install snapcraft --classic
         sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install -y wine32 wine-stable
 
