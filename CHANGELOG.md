@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.9.0 (2020-03-04)
+
+
+### Features
+
+* animated badges ([5c26826](https://github.com/knoopx/feeder/commit/5c26826171eb3e237b85c702576d1b6a50e10964))
+
 ### 1.8.1 (2020-03-04)
 
 
