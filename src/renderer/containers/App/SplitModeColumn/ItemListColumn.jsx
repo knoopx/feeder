@@ -41,6 +41,7 @@ export const ItemListColumn = inject("store")(
         <div className="flex flex-auto overflow-auto border-r">
           {store.filteredItems.length > 0 ? (
             <ItemList
+              key={store.activeSource}
               items={store.filteredItems}
               extended={!store.activeSource}
             />

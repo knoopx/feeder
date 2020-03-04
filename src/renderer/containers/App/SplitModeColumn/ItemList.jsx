@@ -1,18 +1,11 @@
-import React, { useRef, useEffect } from "react"
+import React, { useRef } from "react"
 import { inject, observer } from "mobx-react"
-import { Indicator, FavIcon, TimeAgo } from "components"
+import { VirtualList, Indicator, FavIcon, TimeAgo } from "components"
 import { useHotkeys } from "react-hotkeys-hook"
+import { throttle } from "lodash"
 
 const Item = observer(({ item, isActive, className, extended, ...props }) => {
   const ref = useRef()
-
-  useEffect(() => {
-    if (isActive)
-      ref.current.scrollIntoView({
-        block: "nearest",
-        behavior: "smooth",
-      })
-  }, [isActive, ref.current])
 
   const textGray = [
     {
@@ -25,7 +18,7 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
     <div
       ref={ref}
       className={[
-        "cursor-pointer select-none max-w-full px-6 py-3 border-b",
+        "cursor-pointer select-none px-6 py-3 border-b",
         className,
         {
           "bg-pink-600 text-white": isActive,
@@ -47,7 +40,7 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
         )}
         <TimeAgo since={item.publishedAt} />
       </div>
-      <div className="mb-2 font-medium leading-none">
+      <div className="mb-2 font-medium leading-tight truncate">
         {item.isNew && <Indicator className="-ml-4 mr-1" />} {item.title}
       </div>
       <div className={["text-sm leading-tight truncate-2", textGray]}>
@@ -59,20 +52,46 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
 
 export const ItemList = inject("store")(
   observer(({ className, extended, store }) => {
-    useHotkeys("up", (e) => store.advanceItem(-1) && e.preventDefault())
-    useHotkeys("down", (e) => store.advanceItem(1) && e.preventDefault())
+    const ITEM_HEIGHT = 115
+
+    const ref = useRef()
+
+    const useKeyNavigation = (key, direction) => {
+      useHotkeys(
+        key,
+        throttle((e) => {
+          const nextIndex = store.advanceItem(direction)
+          if (nextIndex >= 0) {
+            e.preventDefault()
+            ref.current.scrollToIndex(nextIndex)
+          }
+        }, 100),
+      )
+    }
+
+    useKeyNavigation("up", -1)
+    useKeyNavigation("down", 1)
 
     return (
       <div className={["flex flex-auto flex-col min-w-0", className]}>
-        {store.filteredItems.map((item) => (
-          <Item
-            key={item.key}
-            item={item}
-            extended={extended}
-            isActive={item === store.activeItem}
-            onClick={() => void store.setActiveItem(item)}
-          />
-        ))}
+        <VirtualList
+          ref={ref}
+          items={store.filteredItems}
+          itemHeight={ITEM_HEIGHT}
+        >
+          {(item) => (
+            <Item
+              style={{ height: ITEM_HEIGHT }}
+              key={item.key}
+              item={item}
+              extended={extended}
+              isActive={item === store.activeItem}
+              onClick={() => {
+                store.setActiveItem(item)
+              }}
+            />
+          )}
+        </VirtualList>
       </div>
     )
   }),

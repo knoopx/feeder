@@ -135,17 +135,17 @@ export default t
       const nextIndex = self.activeItemIndex + direction
       if (self.filteredItems[nextIndex]) {
         self.setActiveItem(self.filteredItems[nextIndex])
-        return true
+        return nextIndex
       }
-      return false
+      return -1
     },
     advanceSource(direction) {
       const nextIndex = self.activeSourceIndex + direction
       if (nextIndex >= -1 && nextIndex < self.sortedSources.length - 1) {
         self.setActiveSource(self.sortedSources[nextIndex])
-        return true
+        return nextIndex
       }
-      return false
+      return -1
     },
     setFilter(value) {
       self.filter = value
