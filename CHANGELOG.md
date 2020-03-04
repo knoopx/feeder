@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 1.9.1 (2020-03-04)
+
+
+### Bug Fixes
+
+* missing observer ([91ad779](https://github.com/knoopx/feeder/commit/91ad779b9fa47294eee70e67112a9a00fbaaaa7d))
+
 ## 1.9.0 (2020-03-04)
 
 
