@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
@@ -35,7 +37,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git fetch origin +refs/tags/*:refs/tags/*
+        git fetch origin --prune --unshallow +refs/tags/*:refs/tags/*
         sudo snap install snapcraft --classic
         sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install -y wine32 wine-stable
 
