@@ -88,7 +88,7 @@ export default t
 
       disposables.push(
         autorun(() => {
-          self.setActiveItem(self.sortedItems[0])
+          self.setActiveItem(self.filteredItems[0])
         }),
       )
 
@@ -156,7 +156,11 @@ export default t
       destroy(source)
     },
     clearItems() {
-      self.sortedItems.forEach((x) => x.markAsRead())
+      if (self.activeSource) {
+        self.activeSource.clearItems()
+      } else {
+        self.allSources.forEach((x) => x.clearItems())
+      }
     },
     fetchSources() {
       self.sortedSources.forEach((source) => {

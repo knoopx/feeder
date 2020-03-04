@@ -1,6 +1,6 @@
 import { values } from "mobx"
 import { orderBy } from "lodash"
-import { types as t, flow, getParent } from "mobx-state-tree"
+import { types as t, flow, getParent, destroy } from "mobx-state-tree"
 import { parseSource } from "support/feed"
 
 import Item from "./Item"
@@ -15,6 +15,7 @@ export default t
     description: t.maybeNull(t.string),
     language: t.maybeNull(t.string),
     items: t.optional(t.map(Item), {}),
+    clearedAt: t.maybeNull(t.Date),
     status: t.optional(
       t.enumeration(["pending", "running", "done"]),
       "pending",
@@ -52,18 +53,24 @@ export default t
       Object.assign(self, snapshot)
     },
     clearItems() {
-      self.sortedItems.forEach((x) => x.markAsRead())
+      self.clearedAt = new Date()
+      self.allItems.forEach((item) => {
+        destroy(item)
+      })
     },
     setStatus(status) {
       self.status = status
     },
-    addItem({ link, ...rest }) {
-      const item = self.items.get(link)
-      self.items.put({
-        link,
-        ...item,
-        ...rest,
-      })
+    addItem({ link, publishedAt, ...rest }) {
+      if (!self.clearedAt || publishedAt > self.clearedAt) {
+        const item = self.items.get(link)
+        self.items.put({
+          link,
+          publishedAt,
+          ...item,
+          ...rest,
+        })
+      }
     },
     toggleReadability() {
       self.readability = !self.readability
