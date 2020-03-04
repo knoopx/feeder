@@ -6,14 +6,14 @@ import {
   MdModeEdit,
   MdAddCircle,
 } from "react-icons/md"
-import { Header, HeaderButton, TitleBarControls } from "components"
+import { Header, HeaderButton, TitleBarControls, Spinner } from "components"
 import { inject, observer, useLocalStore } from "mobx-react"
 
 import { AddSourcePopover } from "./AddSourcePopover"
 import { SourceList } from "./SourceList"
 
 export const SourceListColumn = inject("store")(
-  observer(({ store, ...props }) => {
+  observer(({ store, className, ...props }) => {
     const ref = useRef()
 
     const state = useLocalStore(() => ({
@@ -54,7 +54,7 @@ export const SourceListColumn = inject("store")(
     }
 
     return (
-      <div {...props}>
+      <div className={["relative", className]} {...props}>
         <Header className="border-pink-700 border-r">
           <div className="flex flex-auto items-center">
             <TitleBarControls />
@@ -99,10 +99,14 @@ export const SourceListColumn = inject("store")(
         <div className="flex flex-auto flex-col overflow-hidden border-r">
           <SourceList editMode={state.isEditing} />
         </div>
+
         {store.pending.length > 0 && (
-          <div className="flex justify-between px-4 py-1 border-pink-800 bg-pink-700 text-shadow text-sm text-white font-medium">
+          <div className="absolute inset-0 top-auto flex items-center m-2 px-4 py-1 rounded shadow bg-gray-800 text-shadow text-sm text-white font-medium">
+            <Spinner size="1rem" className="mr-2" />
             <div>Fetching...</div>
-            <div className="italic">{store.pending.length} left</div>
+            <div className="ml-auto italic">
+              {Math.round(store.progress * 100)}%
+            </div>
           </div>
         )}
       </div>
