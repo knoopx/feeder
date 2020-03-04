@@ -33,7 +33,7 @@ app.on("ready", () => {
     height,
     minWidth: 1200,
     minHeight: 800,
-    titleBarStyle: "hiddenInset",
+    frame: false,
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,

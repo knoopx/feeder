@@ -6,7 +6,7 @@ import {
   MdModeEdit,
   MdAddCircle,
 } from "react-icons/md"
-import { Header, HeaderButton } from "components"
+import { Header, HeaderButton, TitleBarControls } from "components"
 import { inject, observer, useLocalStore } from "mobx-react"
 
 import { AddSourcePopover } from "./AddSourcePopover"
@@ -55,41 +55,44 @@ export const SourceListColumn = inject("store")(
 
     return (
       <div {...props}>
-        <Header className="pl-20 border-pink-700 border-r">
-          <div className="flex flex-auto items-center justify-end">
-            <HeaderButton ref={ref} className="mr-2" onClick={onAdd}>
-              <MdAddCircle size="1.25rem" />
-            </HeaderButton>
-            {state.isPopoverOpen && (
-              <AddSourcePopover
-                referenceElement={ref}
-                onDismiss={() => {
-                  state.isPopoverOpen = false
-                }}
-              />
-            )}
-            <HeaderButton
-              className="mr-4 pr-4 border-pink-500 border-r"
-              onClick={onImport}
-            >
-              <MdFileDownload size="1.25rem" />
-            </HeaderButton>
+        <Header className="border-pink-700 border-r">
+          <div className="flex flex-auto items-center">
+            <TitleBarControls />
+            <div className="flex flex-auto justify-end">
+              <HeaderButton ref={ref} className="mr-2" onClick={onAdd}>
+                <MdAddCircle size="1.25rem" />
+              </HeaderButton>
+              {state.isPopoverOpen && (
+                <AddSourcePopover
+                  referenceElement={ref}
+                  onDismiss={() => {
+                    state.isPopoverOpen = false
+                  }}
+                />
+              )}
+              <HeaderButton
+                className="mr-4 pr-4 border-pink-500 border-r"
+                onClick={onImport}
+              >
+                <MdFileDownload size="1.25rem" />
+              </HeaderButton>
 
-            <HeaderButton
-              className={[
-                "mr-4 pr-4 border-pink-500 border-r",
-                {
-                  "text-white": state.isEditing,
-                },
-              ]}
-              onClick={onToggleEdit}
-            >
-              <MdModeEdit size="1.25rem" />
-            </HeaderButton>
+              <HeaderButton
+                className={[
+                  "mr-4 pr-4 border-pink-500 border-r",
+                  {
+                    "text-white": state.isEditing,
+                  },
+                ]}
+                onClick={onToggleEdit}
+              >
+                <MdModeEdit size="1.25rem" />
+              </HeaderButton>
 
-            <HeaderButton onClick={onRefresh}>
-              <MdRefresh size="1.25rem" />
-            </HeaderButton>
+              <HeaderButton onClick={onRefresh}>
+                <MdRefresh size="1.25rem" />
+              </HeaderButton>
+            </div>
           </div>
         </Header>
 
