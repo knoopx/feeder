@@ -1,4 +1,5 @@
 import React, { createElement } from "react"
+import { observer } from "mobx-react"
 import { Spinner } from "components"
 import parse from "rehype-parse"
 import unified from "unified"
@@ -13,7 +14,7 @@ const processor = unified()
   .use(highlight)
   .use(rehype2react, { createElement })
 
-export const Preview = ({ item, className }) => {
+export const Preview = observer(({ item, className }) => {
   let body = absolutize(parseDocument(item.description), item.link).body
     .innerHTML
 
@@ -36,4 +37,4 @@ export const Preview = ({ item, className }) => {
       {processor.processSync(body).contents}
     </div>
   )
-}
+})
