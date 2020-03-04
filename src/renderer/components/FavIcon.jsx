@@ -16,9 +16,7 @@ onSnapshot(cache, (snapshot) => {
 const tryFetchImage = async (url) => {
   try {
     const res = await fetch(url)
-    return (
-      res.status === 200 && res.headers.get("Content-Type").includes("image")
-    )
+    return res.ok && res.headers.get("Content-Type").includes("image")
   } catch (err) {
     return false
   }
