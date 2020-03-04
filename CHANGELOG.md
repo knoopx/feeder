@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 1.8.1 (2020-03-04)
+
+
+### Bug Fixes
+
+* introduce HeaderButton ([e2fb96c](https://github.com/knoopx/feeder/commit/e2fb96cf3b780e522a9c77993d6f4af1e047a204))
+
 ## 1.8.0 (2020-03-03)
 
 
