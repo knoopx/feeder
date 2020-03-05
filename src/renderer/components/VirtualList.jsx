@@ -78,13 +78,12 @@ export const VirtualList = observer(
             containerRef.current = r
             ref.current = r
           }}
-          style={{
-            overflowY: "overlay",
-          }}
+          style={{ overflowY: "overlay" }}
         >
           <div
             className="flex flex-col overflow-hidden"
             style={{
+              willChange: "transform",
               height: store.totalHeight - store.visibleItemsOffsetY,
               transform: `translateY(${store.visibleItemsOffsetY}px)`,
             }}
