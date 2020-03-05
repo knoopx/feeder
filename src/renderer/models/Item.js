@@ -10,6 +10,16 @@ const Item = t
     description: t.maybeNull(t.string),
     publishedAt: t.maybeNull(t.Date),
     isNew: t.optional(t.boolean, true),
+    readability: t.optional(
+      t.model({
+        content: t.maybeNull(t.string),
+        status: t.optional(
+          t.enumeration(["pending", "running", "done", "error"]),
+          "pending",
+        ),
+      }),
+      {},
+    ),
   })
   .views((self) => ({
     get source() {
@@ -23,17 +33,21 @@ const Item = t
       return [self.source.href, self.link]
     },
   }))
-  .volatile(() => ({
-    readableDescription: false,
-  }))
   .actions((self) => ({
     markAsRead() {
       self.isNew = false
     },
     makeReadable: flow(function*() {
-      const doc = yield scrape(self.link)
-      const { content } = new Readability(doc).parse()
-      self.readableDescription = content
+      try {
+        self.readability.status = "running"
+        const doc = yield scrape(self.link)
+        const { content } = new Readability(doc).parse()
+        self.readability.content = content
+        self.readability.status = "done"
+      } catch (err) {
+        self.readability.status = "error"
+        console.warn(err)
+      }
     }),
   }))
 

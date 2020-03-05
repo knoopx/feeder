@@ -1,56 +1,55 @@
-import query from "domqs"
-import { parse, scrape } from "support/parse"
+import q from "domqs"
+import { parse, scrape, absolutize } from "support/parse"
 import { parseISO } from "date-fns"
 
-const htmlDecode = (input) => {
-  const doc = parse(input, "text/html")
-  return doc.documentElement.textContent
-}
-
-const parseRSSSource = query({
+const parseRSS = q({
   title: "title",
   link: "link",
   description: "description",
   language: "language",
+  items: q(["item"], {
+    title: "title",
+    link: "link",
+    author: "author",
+    description: "description",
+    publishedAt: q("pubDate", (x) => new Date(x)),
+  }),
 })
 
-const parseRSSItems = query(["item"], {
+const parseAtom = q({
   title: "title",
   link: "link",
-  author: "author",
-  description: "description",
-  publishedAt: query("pubDate", (x) => new Date(x)),
+  items: q(["entry"], {
+    title: "title",
+    link: "link@href",
+    author: "author name",
+    description: "content",
+    publishedAt: q("updated", parseISO),
+  }),
 })
 
-const parseAtomSource = query({
-  title: "title",
-  link: "link",
-})
-
-const parseAtomItems = query(["entry"], {
-  title: "title",
-  link: "link@href",
-  author: "author name",
-  description: "content",
-  publishedAt: query("updated", parseISO),
-})
-
-export const parseSource = async (href) => {
-  const doc = await scrape(href, "text/xml")
-  console.log(`parsing source ${href}`)
-
+const resolveParser = (doc) => {
   switch (doc.querySelector(":root").nodeName) {
     case "rss":
-      return {
-        source: parseRSSSource(doc),
-        items: parseRSSItems(doc),
-      }
+      return parseRSS
     case "feed":
-      return {
-        source: parseAtomSource(doc),
-        items: parseAtomItems(doc),
-      }
+      return parseAtom
     default:
       throw new Error("Unable to determine feed type")
   }
+}
+
+export const parseFeed = async (href) => {
+  const doc = await scrape(href, "text/xml")
+  const parser = resolveParser(doc)
+  const { items, ...source } = parser(doc)
+
+  items.forEach((item) => {
+    item.description = absolutize(
+      parse(item.description),
+      item.link,
+    ).body.innerHTML
+  })
+
+  return { ...source, items }
 }

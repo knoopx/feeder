@@ -1,7 +1,7 @@
 import { values } from "mobx"
 import { orderBy } from "lodash"
 import { types as t, flow, getParent, destroy } from "mobx-state-tree"
-import { parseSource } from "support/feed"
+import { parseFeed } from "support/feed"
 
 import Item from "./Item"
 
@@ -69,6 +69,7 @@ export default t
     addItem({ link, publishedAt, ...rest }) {
       if (!self.clearedAt || publishedAt > self.clearedAt) {
         const item = self.items.get(link)
+
         self.items.put({
           link,
           publishedAt,
@@ -84,7 +85,7 @@ export default t
       try {
         self.error = null
         self.setStatus("running")
-        const { items, source } = yield parseSource(self.href)
+        const { items, ...source } = yield parseFeed(self.href)
 
         try {
           self.update(source)
@@ -104,7 +105,6 @@ export default t
         console.warn(err)
       } finally {
         self.setStatus("done")
-        self.lastUpdateAt = Date.now()
       }
     }),
   }))

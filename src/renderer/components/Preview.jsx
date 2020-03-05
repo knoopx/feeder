@@ -6,7 +6,6 @@ import unified from "unified"
 import sanitize from "rehype-sanitize"
 import highlight from "rehype-highlight"
 import rehype2react from "rehype-react"
-import { parse as parseDocument, absolutize } from "support/parse"
 
 const processor = unified()
   .use(parse, { emitParseErrors: false, duplicateAttribute: false })
@@ -15,11 +14,10 @@ const processor = unified()
   .use(rehype2react, { createElement })
 
 export const Preview = observer(({ item, className }) => {
-  let body = absolutize(parseDocument(item.description), item.link).body
-    .innerHTML
+  let content = item.description
 
   if (item.source.readability) {
-    if (!item.readableDescription) {
+    if (item.readability.status === "running") {
       return (
         <div className="relative" style={{ paddingBottom: "100%" }}>
           <div className="absolute flex flex-auto items-center justify-center h-full w-full">
@@ -29,12 +27,14 @@ export const Preview = observer(({ item, className }) => {
       )
     }
 
-    body = item.readableDescription
+    if (item.readability.status === "done") {
+      content = item.readability.content
+    }
   }
 
   return (
     <div className={["preview", className]}>
-      {processor.processSync(body).contents}
+      {processor.processSync(content).contents}
     </div>
   )
 })
