@@ -5,15 +5,16 @@ import React, {
   useImperativeHandle,
 } from "react"
 import { observer, useLocalStore } from "mobx-react"
+import { useScrollTop } from "hooks"
 
 export const VirtualList = observer(
   forwardRef(({ items, itemHeight, children, bufferSize = 10 }, ref) => {
-    const container = useRef()
+    const containerRef = useRef()
+    const scrollTop = useScrollTop(containerRef)
 
     const store = useLocalStore(
       (local) => ({
         clientHeight: 0,
-        scrollTop: 0,
 
         get totalHeight() {
           return local.itemHeight * local.items.length
@@ -22,7 +23,7 @@ export const VirtualList = observer(
           return Math.ceil(store.clientHeight / local.itemHeight) + 1
         },
         get firstItemIndex() {
-          return Math.floor(store.scrollTop / local.itemHeight)
+          return Math.floor(local.scrollTop / local.itemHeight)
         },
         get firstVisibleItemIndex() {
           return Math.max(0, store.firstItemIndex - local.bufferSize)
@@ -46,49 +47,40 @@ export const VirtualList = observer(
           )
         },
       }),
-      { items, itemHeight, bufferSize },
+      { items, itemHeight, bufferSize, scrollTop },
     )
-
-    const onScroll = (e) => {
-      store.scrollTop = e.target.scrollTop
-    }
 
     useImperativeHandle(ref, () => ({
       scrollToIndex: (index) => {
         const itemTopPosition = index * itemHeight
 
         // top threshold
-        if (itemTopPosition < container.current.scrollTop) {
-          container.current.scrollTop = itemTopPosition
+        if (itemTopPosition < scrollTop) {
+          containerRef.current.scrollTop = itemTopPosition
         }
 
         // bottom threshold
-        if (
-          itemTopPosition + itemHeight >
-          container.current.scrollTop + store.clientHeight
-        ) {
-          container.current.scrollTop =
+        if (itemTopPosition + itemHeight > scrollTop + store.clientHeight) {
+          containerRef.current.scrollTop =
             itemTopPosition - store.clientHeight + itemHeight
         }
       },
     }))
 
     useEffect(() => {
-      store.scrollTop = container.current.scrollTop
-      store.clientHeight = container.current.clientHeight
+      store.clientHeight = containerRef.current.clientHeight
     }, [])
 
     return (
       <div className="flex flex-auto overflow-hidden">
         <div
           ref={(r) => {
-            container.current = r
+            containerRef.current = r
             ref.current = r
           }}
           style={{
             overflowY: "overlay",
           }}
-          onScroll={onScroll}
         >
           <div
             className="flex flex-col overflow-hidden"
