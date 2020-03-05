@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef } from "react"
-import electron from "electron"
+import { remote } from "electron"
 import {
   MdRefresh,
   MdFileDownload,
@@ -34,16 +34,17 @@ export const SourceListColumn = inject("store")(
     }
 
     const onImport = async () => {
-      const { dialog } = electron.remote
-
-      const { filePaths } = await dialog.showOpenDialog({
-        filters: [
-          {
-            name: "OPML",
-            extensions: ["opml"],
-          },
-        ],
-      })
+      const { filePaths } = await remote.dialog.showOpenDialog(
+        remote.getCurrentWindow(),
+        {
+          filters: [
+            {
+              name: "OPML",
+              extensions: ["opml"],
+            },
+          ],
+        },
+      )
       filePaths.forEach((path) => {
         try {
           store.importOPML(path)
