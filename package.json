@@ -18,8 +18,8 @@
     "electron-default-menu": "^1.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.6",
-    "@babel/preset-env": "^7.8.6",
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
     "@babel/preset-react": "^7.8.3",
     "@fullhuman/postcss-purgecss": "^2.1.0",
     "@knoopx/babel-plugin-jsx-classnames": "^1.2.0",
@@ -31,7 +31,7 @@
     "date-fns": "^2.10.0",
     "domqs": "github:knoopx/domqs",
     "electron": "^8.0.3",
-    "electron-builder": "^22.3.6",
+    "electron-builder": "^22.4.0",
     "electron-webpack-dev-server": "knoopx/electron-webpack-dev-server",
     "electron-window-state": "^5.0.3",
     "extract-css-chunks-webpack-plugin": "^4.7.4",
