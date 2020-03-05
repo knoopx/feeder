@@ -39,9 +39,14 @@ export const parse = (string, type = "text/html", base) => {
 export const scrape = async (url) => {
   const res = await fetch(url)
   const body = await res.text()
-  let type = "text/html"
-  if (res.headers.get("Content-Type")?.includes("xml")) {
-    type = "text/xml"
+  const contentType = res.headers.get("Content-Type")
+
+  switch (true) {
+    case contentType.includes("xml"):
+      return parse(body, "text/xml", url)
+    case contentType.includes("html"):
+      return parse(body, "text/html", url)
+    default:
+      throw new Error(`Cannot parse content type ${contentType}`)
   }
-  return parse(body, type, url)
 }
