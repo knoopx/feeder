@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/knoopx/feeder/compare/v1.9.1...v1.10.0) (2020-03-05)
+
+
+### Features
+
+* updated deps ([59ba4a7](https://github.com/knoopx/feeder/commit/59ba4a7ea515877b045400b661e0ab580f4c1c14))
+
+
+### Bug Fixes
+
+* build ([ea3a843](https://github.com/knoopx/feeder/commit/ea3a8430bbeb1ae90b46df034c42af8ce001209f))
+* improve parsing logic ([2691f56](https://github.com/knoopx/feeder/commit/2691f56350fb4345e714addb948c3ef5896a170e))
+* improve virtual list performance ([cc1e895](https://github.com/knoopx/feeder/commit/cc1e8957487529798e686be61e49fbbaf5dc0d30))
+* improved feed parsing ([7bd5a4a](https://github.com/knoopx/feeder/commit/7bd5a4aa76e72dc06d93b0103f3c6fb850708da7))
+* incorrect ref ([d37badb](https://github.com/knoopx/feeder/commit/d37badb26e38fe9571b4f9b8066de811cf3fe769))
+* make import dialog modal ([068cbc3](https://github.com/knoopx/feeder/commit/068cbc32f79b64018dc4feed9a4bc0e98452793e))
+* missing new item indicator ([ebff603](https://github.com/knoopx/feeder/commit/ebff60361072632d9ef55a2404291cce7255ab4b))
+* more lazy loading cases ([5cffef9](https://github.com/knoopx/feeder/commit/5cffef9c541bfe0fb3f99c227aa0cced5e84022e))
+* reduce markup ([c1a4b25](https://github.com/knoopx/feeder/commit/c1a4b254ef11b8d1f70eb9ecd8420fd6c8c40913))
+
 ### 1.9.1 (2020-03-04)
 
 
