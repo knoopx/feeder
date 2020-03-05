@@ -9,13 +9,18 @@ const absolutizeProp = (prop, base) => (doc) => {
   return doc
 }
 
+const renameProp = (oldName, newName) => (doc) => {
+  Array.from(doc.querySelectorAll(`[${oldName}]`)).forEach((node) => {
+    node.setAttribute(newName, node.getAttribute(oldName))
+  })
+}
+
 export const absolutize = (doc, base) => {
   // todo: srcset
 
   // fix lazy-loaded images
-  Array.from(doc.querySelectorAll("[data-src]")).forEach((node) => {
-    node.setAttribute("src", node.getAttribute("data-src"))
-  })
+  renameProp("data-src", "src")(doc)
+  renameProp("data-lazy-src", "src")(doc)
 
   absolutizeProp("src", base)(doc)
   absolutizeProp("href", base)(doc)
