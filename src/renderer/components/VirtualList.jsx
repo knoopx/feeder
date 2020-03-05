@@ -72,24 +72,23 @@ export const VirtualList = observer(
     }, [])
 
     return (
-      <div className="flex flex-auto overflow-hidden">
+      <div
+        className="flex flex-auto overflow-hidden"
+        ref={(r) => {
+          containerRef.current = r
+          ref.current = r
+        }}
+        style={{ overflowY: "overlay" }}
+      >
         <div
-          ref={(r) => {
-            containerRef.current = r
-            ref.current = r
+          className="flex flex-auto flex-col overflow-hidden"
+          style={{
+            willChange: "transform",
+            height: store.totalHeight - store.visibleItemsOffsetY,
+            transform: `translateY(${store.visibleItemsOffsetY}px)`,
           }}
-          style={{ overflowY: "overlay" }}
         >
-          <div
-            className="flex flex-col overflow-hidden"
-            style={{
-              willChange: "transform",
-              height: store.totalHeight - store.visibleItemsOffsetY,
-              transform: `translateY(${store.visibleItemsOffsetY}px)`,
-            }}
-          >
-            {store.visibleItems.map(children)}
-          </div>
+          {store.visibleItems.map(children)}
         </div>
       </div>
     )
