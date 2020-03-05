@@ -18,7 +18,7 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
     <div
       ref={ref}
       className={[
-        "cursor-pointer select-none px-6 py-3 border-b",
+        "cursor-pointer select-none flex flex-col px-6 py-3 border-b",
         className,
         {
           "bg-pink-600 text-white": isActive,
@@ -40,10 +40,13 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
         )}
         <TimeAgo since={item.publishedAt} />
       </div>
-      <div className="mb-2 font-medium leading-tight truncate">
+      <div className="mb-2 font-medium leading-tight">
         {item.isNew && <Indicator className="-ml-4 mr-1" />} {item.title}
       </div>
-      <div className={["text-sm leading-tight truncate-2", textGray]}>
+      <div
+        className={["text-sm leading-tight line-clamp-2", textGray]}
+        style={{ whiteSpace: "normal" }}
+      >
         {item.summary}
       </div>
     </div>
