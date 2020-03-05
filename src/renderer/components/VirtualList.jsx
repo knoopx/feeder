@@ -31,7 +31,7 @@ export const VirtualList = observer(
         get lastVisibleItemIndex() {
           return Math.min(
             store.firstItemIndex + local.bufferSize + store.visibleItemsCount,
-            items.length,
+            local.items.length,
           )
         },
         get visibleItemsOffsetY() {
