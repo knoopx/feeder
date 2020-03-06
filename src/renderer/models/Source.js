@@ -1,5 +1,5 @@
 import { values } from "mobx"
-import { orderBy } from "lodash"
+import { orderBy, reverse } from "lodash"
 import { types as t, flow, getParent, destroy } from "mobx-state-tree"
 import { parseFeed } from "support/feed"
 
@@ -15,7 +15,9 @@ export default t
     description: t.maybeNull(t.string),
     language: t.maybeNull(t.string),
     items: t.optional(t.map(Item), {}),
+    publishedAt: t.maybeNull(t.Date),
     clearedAt: t.maybeNull(t.Date),
+    fetchedAt: t.maybeNull(t.Date),
     status: t.optional(
       t.enumeration(["pending", "running", "done"]),
       "pending",
@@ -38,12 +40,6 @@ export default t
     get sortedItems() {
       return orderBy(self.allItems, ["publishedAt"], ["desc"])
     },
-    get lastPublishedAt() {
-      return self.sortedItems[0]?.publishedAt
-    },
-    get updatedAt() {
-      return self.lastPublishedAt || self.clearedAt || 0
-    },
     get newItemsCount() {
       return values(self.items).filter((item) => item.isNew).length
     },
@@ -56,9 +52,7 @@ export default t
       Object.assign(self, snapshot)
     },
     clearItems() {
-      if (self.lastPublishedAt) {
-        self.clearedAt = self.lastPublishedAt
-      }
+      self.clearedAt = new Date()
       self.allItems.forEach((item) => {
         destroy(item)
       })
@@ -67,7 +61,7 @@ export default t
       self.status = status
     },
     addItem({ link, publishedAt, ...rest }) {
-      if (!self.clearedAt || publishedAt > self.clearedAt) {
+      if (!self.clearedAt || !publishedAt || publishedAt > self.clearedAt) {
         const item = self.items.get(link)
 
         self.items.put({
@@ -93,7 +87,7 @@ export default t
           console.warn(err)
         }
 
-        items.forEach((item) => {
+        reverse(items).forEach((item) => {
           try {
             self.addItem(item)
           } catch (err) {

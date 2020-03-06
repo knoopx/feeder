@@ -53,10 +53,10 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
             )}
             <div className="min-w-0 truncate">{source.title}</div>
           </div>
-          {source.updatedAt > 0 && (
+          {source.publishedAt && (
             <TimeAgo
               className="ml-6 text-gray-600 text-xs"
-              since={source.updatedAt}
+              since={source.publishedAt}
             />
           )}
         </div>

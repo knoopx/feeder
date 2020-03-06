@@ -46,10 +46,12 @@ export const ItemColumn = inject("store")(
                     </div>
                   )}
                 </div>
-                <TimeAgo
-                  className="flex flex-col text-right text-sm"
-                  since={item.publishedAt}
-                />
+                {item.publishedAt && (
+                  <TimeAgo
+                    className="flex flex-col text-right text-sm"
+                    since={item.publishedAt}
+                  />
+                )}
               </div>
 
               <div className="text-2xl font-medium leading-none">

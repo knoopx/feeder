@@ -38,7 +38,7 @@ const Item = observer(({ item, isActive, className, extended, ...props }) => {
             <div>{item.source.title}</div>
           </div>
         )}
-        <TimeAgo since={item.publishedAt} />
+        {item.publishedAt && <TimeAgo since={item.publishedAt} />}
       </div>
       <div className="mb-2 font-medium leading-tight">
         {item.isNew && <Indicator className="-ml-4 mr-1" />} {item.title}

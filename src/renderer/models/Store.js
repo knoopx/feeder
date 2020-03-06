@@ -58,7 +58,7 @@ export default t
     get sortedSources() {
       return orderBy(
         self.allSources,
-        ["updatedAt", "newItemsCount", "title"],
+        [(s) => Number(s.publishedAt), "newItemsCount", "title"],
         ["desc", "desc", "asc"],
       )
     },

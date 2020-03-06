@@ -5,6 +5,7 @@ import { parseISO } from "date-fns"
 const parseRSS = q({
   title: "title",
   link: "link",
+  publishedAt: q("pubDate", (x) => x && new Date(x)),
   description: "description",
   language: "language",
   items: q(["item"], {
@@ -12,13 +13,14 @@ const parseRSS = q({
     link: "link",
     author: "author",
     description: "description",
-    publishedAt: q("pubDate", (x) => new Date(x)),
+    publishedAt: q("pubDate", (x) => x && new Date(x)),
   }),
 })
 
 const parseAtom = q({
   title: "title",
   link: "link",
+  publishedAt: q("updated", parseISO),
   items: q(["entry"], {
     title: "title",
     link: "link@href",
