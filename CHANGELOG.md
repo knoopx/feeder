@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/knoopx/feeder/compare/v1.10.0...v1.11.0) (2020-03-06)
+
+
+### Features
+
+* automatically refresh feeds ([f0d45bd](https://github.com/knoopx/feeder/commit/f0d45bd96fbc68b052c232336e585d4ed57dc754))
+* connectivity checks ([e4c98c8](https://github.com/knoopx/feeder/commit/e4c98c8b609108b0ae90f5cec82e589c6ae06a61))
+
+
+### Bug Fixes
+
+* properly handle items without publication date ([cf8fd45](https://github.com/knoopx/feeder/commit/cf8fd4561eaa45c0770488ac3861ad9b16f4f6c1))
+
 ## [1.10.0](https://github.com/knoopx/feeder/compare/v1.9.1...v1.10.0) (2020-03-05)
 
 
