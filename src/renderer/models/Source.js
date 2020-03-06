@@ -6,7 +6,7 @@ import { parseFeed } from "support/feed"
 
 import Item from "./Item"
 
-const REFRESH_INTERVAL = 60
+const REFRESH_INTERVAL = 5 * 60
 
 const disposables = []
 
