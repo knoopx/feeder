@@ -1,4 +1,5 @@
 export { useHover } from "./useHover"
 export { useOnClickOutside } from "./useOnClickOutside"
+export { useOnline } from "./useOnline"
 export { usePopper } from "./usePopper"
 export { useScrollTop } from "./useScrollTop"

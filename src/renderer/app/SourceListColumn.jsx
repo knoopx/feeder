@@ -1,11 +1,13 @@
-import React, { forwardRef, useRef } from "react"
+import React, { useRef } from "react"
 import { remote } from "electron"
 import {
   MdRefresh,
   MdFileDownload,
   MdModeEdit,
   MdAddCircle,
+  MdSignalWifiOff,
 } from "react-icons/md"
+import { useOnline } from "hooks"
 import { Header, HeaderButton, TitleBarControls, Spinner } from "components"
 import { inject, observer, useLocalStore } from "mobx-react"
 
@@ -14,6 +16,8 @@ import { SourceList } from "./SourceList"
 
 export const SourceListColumn = inject("store")(
   observer(({ store, className, ...props }) => {
+    const isOnline = useOnline()
+
     const ref = useRef()
 
     const state = useLocalStore(() => ({
@@ -59,7 +63,7 @@ export const SourceListColumn = inject("store")(
         <Header className="border-pink-700 border-r">
           <div className="flex flex-auto items-center">
             <TitleBarControls />
-            <div className="flex flex-auto justify-end">
+            <div className="flex flex-auto items-center justify-end">
               <HeaderButton ref={ref} className="mr-2" onClick={onAdd}>
                 <MdAddCircle size="1.25rem" />
               </HeaderButton>
@@ -90,9 +94,13 @@ export const SourceListColumn = inject("store")(
                 <MdModeEdit size="1.25rem" />
               </HeaderButton>
 
-              <HeaderButton onClick={onRefresh}>
-                <MdRefresh size="1.25rem" />
-              </HeaderButton>
+              {isOnline ? (
+                <HeaderButton onClick={onRefresh}>
+                  <MdRefresh size="1.25rem" />
+                </HeaderButton>
+              ) : (
+                <MdSignalWifiOff className="text-pink-600" />
+              )}
             </div>
           </div>
         </Header>

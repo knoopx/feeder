@@ -113,6 +113,7 @@ export default t
       disposables.push(
         autorun(async () => {
           if (
+            navigator.onLine &&
             self.pending.length > 0 &&
             self.running.length < self.concurrency
           ) {
