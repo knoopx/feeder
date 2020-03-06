@@ -70,10 +70,7 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
             </a>
           ) : (
             source.newItemsCount > 0 && (
-              <AnimatedBadge
-                className={["ml-4 text-gray-600"]}
-                value={source.newItemsCount}
-              />
+              <AnimatedBadge className="ml-4" value={source.newItemsCount} />
             )
           )}
         </div>
