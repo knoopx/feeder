@@ -1,9 +1,12 @@
-import { values } from "mobx"
+import { autorun, values } from "mobx"
+import { now } from "mobx-utils"
 import { orderBy, reverse } from "lodash"
 import { types as t, flow, getParent, destroy } from "mobx-state-tree"
 import { parseFeed } from "support/feed"
 
 import Item from "./Item"
+
+const REFRESH_INTERVAL = 60
 
 const disposables = []
 
@@ -45,6 +48,15 @@ export default t
     },
   }))
   .actions((self) => ({
+    afterCreate() {
+      disposables.push(
+        autorun(() => {
+          if ((now() - self.fetchedAt) / 1000 > REFRESH_INTERVAL) {
+            self.setStatus("pending")
+          }
+        }),
+      )
+    },
     beforeDestroy() {
       disposables.forEach((dispose) => dispose())
     },
@@ -98,6 +110,7 @@ export default t
         self.error = err
         console.warn(err)
       } finally {
+        self.fetchedAt = new Date()
         self.setStatus("done")
       }
     }),
