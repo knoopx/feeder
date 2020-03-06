@@ -6,7 +6,7 @@ import { onSnapshot } from "mobx-state-tree"
 import hotkeys from "hotkeys-js"
 
 import Store from "./models/Store"
-import App from "./containers/App"
+import App from "./app"
 
 // By default hotkeys are not enabled for INPUT SELECT TEXTAREA elements
 hotkeys.filter = () => true
