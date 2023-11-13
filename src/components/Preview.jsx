@@ -4,11 +4,8 @@ import { observer } from "mobx-react"
 
 import rehypeHighlight from "rehype-highlight"
 import rehypeParse from "rehype-parse"
-import rehypeRemark from "rehype-remark"
 import rehypeSanitize from "rehype-sanitize"
-import remarkGfm from "remark-gfm"
-import remarkStringify from "remark-stringify"
-import Markdown from "react-markdown"
+import rehypeStringify from "rehype-stringify"
 import { unified } from "unified"
 
 const processor = unified()
@@ -19,9 +16,7 @@ const processor = unified()
   })
   .use(rehypeSanitize)
   .use(rehypeHighlight)
-  .use(rehypeRemark)
-  .use(remarkGfm)
-  .use(remarkStringify)
+  .use(rehypeStringify)
 
 export const Preview = observer(({ item, className }) => {
   let body = absolutize(parseDocument(item.description), item.link).body
@@ -42,8 +37,9 @@ export const Preview = observer(({ item, className }) => {
   }
 
   return (
-    <div className={["preview", className]}>
-      <Markdown>{processor.processSync(body).value}</Markdown>
-    </div>
+    <div
+      className={["preview w-[80ch] mx-auto", className]}
+      dangerouslySetInnerHTML={{ __html: processor.processSync(body).value }}
+    />
   )
 })
