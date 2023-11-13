@@ -1,0 +1,32 @@
+import React from "react"
+import { Provider } from "mobx-react"
+import { debounce } from "lodash"
+import { onSnapshot } from "mobx-state-tree"
+import hotkeys from "hotkeys-js"
+import { createRoot } from "react-dom/client"
+
+import "./index.css"
+
+import Store from "./models/Store"
+import App from "./containers/App"
+
+// By default hotkeys are not enabled for INPUT SELECT TEXTAREA elements
+hotkeys.filter = () => true
+
+const store = Store.create(
+  localStorage.store ? JSON.parse(localStorage.store) : {},
+)
+
+const root = createRoot(document.getElementById("root"))
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+)
+
+onSnapshot(
+  store,
+  debounce((snapshot) => {
+    localStorage.store = JSON.stringify(snapshot)
+  }, 1000),
+)

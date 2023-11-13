@@ -1,0 +1,39 @@
+{
+  "sources": {
+    "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml": {
+      "title": "GitHub All Languages Daily Trending",
+      "href": "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml",
+      "link": "http://mshibanami.github.io/GitHubTrendingRSS",
+      "description": "Daily Trending of All Languages in GitHub",
+      "language": null,
+      "clearedAt": null,
+      "status": "done",
+      "readability": false
+    },
+    "https://hnrss.org/newest": {
+      "title": "Hacker News: Newest",
+      "href": "https://hnrss.org/newest",
+      "link": "https://news.ycombinator.com/newest",
+      "description": "Hacker News RSS",
+      "language": null,
+      "clearedAt": null,
+      "status": "done",
+      "readability": true
+    },
+    "https://www.reddit.com/r/LocalLLaMA/.rss": {
+      "title": "LocalLlama",
+      "href": "https://www.reddit.com/r/LocalLLaMA/.rss",
+      "link": "",
+      "description": null,
+      "language": null,
+      "clearedAt": null,
+      "status": "done",
+      "readability": false
+    }
+  },
+  "concurrency": 4,
+  "filter": "",
+  "mode": "split",
+  "activeSourceIndex": 2,
+  "activeItem": "https://github.com/krahets/hello-algo"
+}

@@ -87,26 +87,31 @@ module.exports = {
           {
             loader: "postcss-loader",
             options: {
-              plugins: [
-                require("postcss-import")(),
-                require("postcss-nested"),
-                require("postcss-simple-vars"),
-                require("tailwindcss"),
-                !isDevelopment &&
-                  purgecss({
-                    whitelist: ["html", "body"],
-                    content: [
-                      path.join(__dirname, "./src/renderer/**/*.{js,jsx,css}"),
-                    ],
-                    extractors: [
-                      {
-                        extractor: (content) =>
-                          content.match(/[A-Za-z0-9-_:/]+/g),
-                        extensions: ["js", "jsx"],
-                      },
-                    ],
-                  }),
-              ].filter(Boolean),
+              postcssOptions: {
+                plugins: [
+                  require("postcss-import")(),
+                  require("postcss-nested"),
+                  require("postcss-simple-vars"),
+                  require("tailwindcss"),
+                  !isDevelopment &&
+                    purgecss({
+                      whitelist: ["html", "body"],
+                      content: [
+                        path.join(
+                          __dirname,
+                          "./src/renderer/**/*.{js,jsx,css}",
+                        ),
+                      ],
+                      extractors: [
+                        {
+                          extractor: (content) =>
+                            content.match(/[A-Za-z0-9-_:/]+/g),
+                          extensions: ["js", "jsx"],
+                        },
+                      ],
+                    }),
+                ].filter(Boolean),
+              },
             },
           },
         ],

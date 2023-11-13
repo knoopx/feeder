@@ -1,3 +1,3 @@
-# Feeder
+# Reeder
 
 ![Screenshot](screenshot.png)
