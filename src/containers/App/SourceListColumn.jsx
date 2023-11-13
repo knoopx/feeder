@@ -54,6 +54,9 @@ export const SourceListColumn = inject("store")(
       <div className={["relative", className]} {...props}>
         <Header className="border-pink-700 border-r">
           <div className="flex flex-auto items-center">
+            <div className="text-xl font-medium font-logo">
+              Reeder
+            </div>
             <div className="flex flex-auto justify-end">
               <HeaderButton ref={ref} className="mr-2" onClick={onAdd}>
                 <MdAddCircle size="1.25rem" />
