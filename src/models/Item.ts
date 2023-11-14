@@ -18,9 +18,14 @@ export const Item = t
     get source() {
       return getParent(self, 2)
     },
+    get document() {
+      return parseDocument(self.description ?? "", "text/html", self.link)
+    },
     get summary() {
-      const doc = parseDocument(self.description)
-      return doc.body.innerText.slice(0, 200)
+      return this.document.body.innerText.slice(0, 200)
+    },
+    get htmlDescription() {
+      return this.document.body.innerHTML
     },
     get key() {
       return [self.source.href, self.link]

@@ -1,5 +1,4 @@
 import { Spinner } from "."
-import { parseDocument, absolutize } from "../support/parseDOM"
 import { observer } from "mobx-react"
 
 import rehypeHighlight from "rehype-highlight"
@@ -19,9 +18,7 @@ const processor = unified()
   .use(rehypeStringify)
 
 export const Preview = observer(({ item, className }) => {
-  let body = absolutize(parseDocument(item.description), item.link).body
-    .innerHTML
-
+  let body = item.htmlDescription
   if (item.source.readability) {
     if (!item.readableDescription) {
       return (
