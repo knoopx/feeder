@@ -32,7 +32,7 @@ export const ItemColumn = inject("store")(
           )}
         </Header>
         {item ? (
-          <div className="flex-auto overflow-auto">
+          <div className="flex-auto overflow-y-auto">
             <div className="px-8 py-4 border-b">
               <div className="flex justify-between mb-2 text-gray-600">
                 <div>

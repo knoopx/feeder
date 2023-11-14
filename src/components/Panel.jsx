@@ -7,7 +7,7 @@ export const Panel = observer(
     return (
       <div className={["flex flex-col", panelClassName]}>
         <Header className="justify-between border-pink-700">{header}</Header>
-        <div className={[className, "flex flex-auto overflow-auto"]}>
+        <div className={[className, "flex flex-auto overflow-y-auto"]}>
           {children}
         </div>
       </div>

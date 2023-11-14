@@ -38,7 +38,7 @@ export const ItemListColumn = inject("store")(
           </div>
         </Header>
 
-        <div className="flex flex-auto overflow-auto border-r">
+        <div className="flex flex-auto overflow-y-auto w-[60ch] border-r">
           {store.filteredItems.length > 0 ? (
             <ItemList
               items={store.filteredItems}

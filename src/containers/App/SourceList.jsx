@@ -14,7 +14,7 @@ export const SourceList = inject("store")(
     )
 
     return (
-      <div className="flex flex-auto flex-col overflow-auto">
+      <div className="flex flex-auto flex-col overflow-y-auto">
         <Source
           source={{
             title: "All Sources",

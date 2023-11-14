@@ -11,7 +11,7 @@ export const SourceEditView = inject("store")(
     return (
       <div className="flex flex-auto">
         <Panel header="Preview" className={"space-y-2 flex-col"} panelClassName="w-[60ch]">
-          <div className="flex flex-auto overflow-auto">
+          <div className="flex flex-auto overflow-y-auto">
             {activeSource.parsedItems.length > 0 ? (
               <ItemList items={activeSource.parsedItems} extended={true} />
             ) : (
