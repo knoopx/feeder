@@ -1,11 +1,11 @@
+import q from "domqs"
 import React from "react"
 import { Popover, Spinner } from "../../components"
 import { inject, observer, useLocalStore } from "mobx-react"
-import { scrape } from "../../support/parse"
-import query from "domqs"
 import { MdError } from "react-icons/md"
+import { fetchDoc } from "../../support/fetchDoc"
 
-const findFeeds = query(["link[type='application/rss+xml']@href"])
+const findFeeds = q(["link[type='application/rss+xml']@href"])
 
 export const AddSourcePopover = inject("store")(
   observer(({ store, onDismiss, ...props }) => {
@@ -26,7 +26,7 @@ export const AddSourcePopover = inject("store")(
       try {
         state.isLoading = true
         state.error = false
-        const doc = await scrape(href)
+        const doc = await fetchDoc(href)
         console.log(doc.querySelector(":root").nodeName)
         if (["rss", "feed"].includes(doc.querySelector(":root").nodeName)) {
           store.addSource({
@@ -40,6 +40,13 @@ export const AddSourcePopover = inject("store")(
             store.addSource({
               title: "Loading...",
               href: feeds[0],
+            })
+            onDismiss()
+          } else {
+            store.addSource({
+              title: "New Source",
+              href,
+              kind: "html",
             })
             onDismiss()
           }

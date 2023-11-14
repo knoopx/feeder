@@ -1,9 +1,9 @@
+import q from "domqs"
 import React, { useEffect, useState } from "react"
 import { types, unprotect, onSnapshot } from "mobx-state-tree"
 import { observer } from "mobx-react"
 import { MdRssFeed } from "react-icons/md"
-import { scrape } from "../support/parse"
-import query from "domqs"
+import { fetchDoc } from "../support/fetchDoc"
 
 const Store = types.map(types.string)
 const cache = Store.create(JSON.parse(localStorage.faviconCache || "{}"))
@@ -22,13 +22,13 @@ const tryFetchImage = async (url) => {
   }
 }
 
-const match = query(["link[rel*='icon']@href"])
+const match = q(["link[rel*='icon']@href"])
 
-const resolveIcons = async (src) => {
+const resolveIcons = async (src: string) => {
   cache.set(src, "")
 
   try {
-    const doc = await scrape(src, "text/html")
+    const doc = await fetchDoc(src, "text/html")
     const matches = match(doc)
 
     const candidates = new Set([

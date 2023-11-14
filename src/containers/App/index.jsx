@@ -2,13 +2,18 @@ import React from "react"
 import { inject, observer } from "mobx-react"
 
 import { SourceListColumn } from "./SourceListColumn"
-import { SplitModeColumn } from "./SplitModeColumn"
+import { SourceItemsView } from "./SplitModeColumn"
+import { SourceEditView } from "./SourceEditView"
 
 const App = observer(({ store }) => {
   return (
     <>
-      <SourceListColumn className="flex flex-col w-1/4" />
-      {store.mode === "split" && <SplitModeColumn />}
+      <SourceListColumn className="flex flex-col w-[35ch]" />
+      {store.isEditing && store.activeSource ? (
+        <SourceEditView />
+      ) : (
+        <SourceItemsView />
+      )}
     </>
   )
 })

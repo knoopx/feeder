@@ -1,5 +1,5 @@
 import { Spinner } from "."
-import { parse as parseDocument, absolutize } from "../support/parse"
+import { parseDocument, absolutize } from "../support/parseDOM"
 import { observer } from "mobx-react"
 
 import rehypeHighlight from "rehype-highlight"

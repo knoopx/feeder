@@ -1,6 +1,6 @@
 import { fontFamily } from "tailwindcss/defaultTheme"
 
-export const content = ["./src/**/*.{js,jsx,html}"]
+export const content = ["./src/**/*.{js,jsx,ts,tsx}"]
 export const theme = {
   extend: {
     fontFamily: {

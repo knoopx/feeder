@@ -3,8 +3,8 @@ import { sumBy, max, map, orderBy, flatten } from "lodash"
 import { types as t, destroy } from "mobx-state-tree"
 import { parseOPML } from "../support/opml"
 
-import Item from "./Item"
-import Source from "./Source"
+import { Item } from "./Item"
+import { Source } from "./Source"
 
 const disposables = []
 
@@ -13,7 +13,7 @@ export default t
     sources: t.optional(t.map(Source), {}),
     concurrency: t.optional(t.number, 4),
     filter: t.optional(t.string, ""),
-    mode: t.optional(t.enumeration(["split", "stream"]), "split"),
+    isEditing: t.optional(t.boolean, false),
     activeSourceIndex: t.optional(t.number, -1),
     activeItem: t.maybeNull(
       t.reference(Item, {
@@ -124,6 +124,9 @@ export default t
     afterDestroy() {
       disposables.forEach((dispose) => dispose())
     },
+    toggleEdit() {
+      self.isEditing = !self.isEditing
+    },
     setActiveSource(source) {
       self.activeSourceIndex = self.sortedSources.indexOf(source)
     },
@@ -149,9 +152,6 @@ export default t
     setFilter(value) {
       self.filter = value
     },
-    setMode(mode) {
-      self.mode = mode
-    },
     addSource(source) {
       self.sources.put(source)
     },
@@ -170,7 +170,7 @@ export default t
     },
     fetchSources() {
       self.sortedSources.forEach((source) => {
-        source.setStatus("pending")
+        source.update({ status: "pending" })
       })
     },
     importOPML(path) {

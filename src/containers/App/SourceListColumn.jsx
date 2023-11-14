@@ -28,9 +28,6 @@ export const SourceListColumn = inject("store")(
       state.isPopoverOpen = true
     }
 
-    const onToggleEdit = () => {
-      state.isEditing = !state.isEditing
-    }
 
     const onImport = async () => {
       const { filePaths } = await dialog.showOpenDialog({
@@ -80,10 +77,10 @@ export const SourceListColumn = inject("store")(
                 className={[
                   "mr-4 pr-4 border-pink-500 border-r",
                   {
-                    "text-white": state.isEditing,
+                    "text-white": store.isEditing,
                   },
                 ]}
-                onClick={onToggleEdit}
+                onClick={store.toggleEdit}
               >
                 <MdModeEdit size="1.25rem" />
               </HeaderButton>
@@ -96,7 +93,7 @@ export const SourceListColumn = inject("store")(
         </Header>
 
         <div className="flex flex-auto flex-col overflow-hidden border-r">
-          <SourceList editMode={state.isEditing} />
+          <SourceList editMode={store.isEditing} />
         </div>
 
         {store.pending.length > 0 && (
