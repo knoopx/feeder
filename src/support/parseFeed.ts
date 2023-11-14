@@ -1,8 +1,7 @@
 import q from "domqs"
-import { scrape } from "./parse"
 import { parseISO } from "date-fns"
 
-const parseDate = (x) => {
+const parseDate = (x: string) => {
   if (x === null) return new Date()
   const date = new Date(x)
   return isNaN(date) ? new Date() : date
@@ -17,7 +16,7 @@ const parseRSSSource = q({
 
 const parseRSSItems = q(["item"], {
   title: "title",
-  link: "link",
+  link: "guid[isPermaLink='true'], link",
   author: "author",
   description: "description",
   publishedAt: q("pubDate", parseDate),
@@ -36,21 +35,26 @@ const parseAtomItems = q(["entry"], {
   publishedAt: q("updated", parseISO),
 })
 
-export const parseSource = async (href) => {
-  const doc = await scrape(href, "text/xml")
-
-  switch (doc.querySelector(":root").nodeName) {
+export const parseFeed = async (doc: Document) => {
+  switch (doc.querySelector(":root")?.nodeName) {
     case "rss":
-      return {
-        source: parseRSSSource(doc),
-        items: parseRSSItems(doc),
-      }
+      return parseRSS(doc)
     case "feed":
-      return {
-        source: parseAtomSource(doc),
-        items: parseAtomItems(doc),
-      }
+      return parseAtom(doc)
     default:
       throw new Error("Unable to determine feed type")
+  }
+}
+function parseAtom(doc: Document) {
+  return {
+    source: parseAtomSource(doc),
+    items: parseAtomItems(doc),
+  }
+}
+
+function parseRSS(doc: Document) {
+  return {
+    source: parseRSSSource(doc),
+    items: parseRSSItems(doc),
   }
 }
