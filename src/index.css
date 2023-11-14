@@ -19,7 +19,7 @@ a {
 }
 
 #root {
-  @apply flex flex-auto w-screen h-screen bg-white overflow-hidden;
+  @apply flex flex-auto bg-white overflow-hidden h-screen;
 }
 
 .text-shadow {
