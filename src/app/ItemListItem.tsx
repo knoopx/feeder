@@ -86,15 +86,22 @@ export const ItemListItem = observer(
         </div>
 
         <div className="">
-          {!isEmpty(item.title) && <ItemListItemTitle item={item} />}
-          <div className="flow-row space-x-2">
-            <div className="flex-auto overflow-hidden">
-              {!isEmpty(item.summary) && <ItemListItemSummary item={item} />}
+          <div className="relative flow-row">
+            {item.isNew && (
+              <Indicator className="absolute left-[-14px] top-1.5" />
+            )}
+
+            <div className="flow-col overflow-x-hidden">
+              {/* {!isEmpty(item.title) && <ItemListItemTitle item={item} />} */}
+              <div className="font-medium">{item.title}</div>
+              <div className="flex-auto">
+                {!isEmpty(item.summary) && <ItemListItemSummary item={item} />}
+              </div>
             </div>
 
             {!isEmpty(item.image) && (
               <img
-                className="-mt-6 flex-none h-16 aspect-video object-cover object-center rounded border "
+                className="ml-4 flex-none h-16 aspect-video object-cover object-center rounded border "
                 src={item.image}
               />
             )}

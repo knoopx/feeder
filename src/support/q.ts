@@ -1,4 +1,5 @@
 import { flow, isString, isFunction, isObject, isArray, isEmpty } from "lodash"
+import sizzle from "sizzle"
 
 import { applyFilters, getAttrOrProp, parseInput } from "./util"
 
@@ -36,7 +37,8 @@ function $all(input: string, transform: (val: string) => string) {
 
     if (!selector) return []
 
-    const results = Array.from(doc.querySelectorAll(selector))
+    // const results = Array.from(doc.querySelectorAll(selector))
+    const results = sizzle(selector, doc)
     if (isFunction(transform)) {
       if (input.includes("@")) {
         return results.map(
@@ -63,11 +65,16 @@ function $first(input, transform = (val) => val) {
       const { selector, attrName, filters } = parseInput(input)
 
       if (selector) {
+        // return flow(
+        //   getAttrOrProp(attrName),
+        //   applyFilters(filters),
+        //   transform,
+        // )(doc.querySelector(selector))
         return flow(
           getAttrOrProp(attrName),
           applyFilters(filters),
           transform,
-        )(doc.querySelector(selector))
+        )(sizzle(selector, doc)[0])
       }
 
       return flow(

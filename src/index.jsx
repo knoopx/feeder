@@ -1,14 +1,13 @@
-import React from "react"
+import hotkeys from "hotkeys-js"
 import { Provider } from "mobx-react"
 import { debounce } from "lodash"
 import { onSnapshot } from "mobx-state-tree"
-import hotkeys from "hotkeys-js"
 import { createRoot } from "react-dom/client"
 
 import "./index.css"
 
-import Store from "./models/Store"
-import Shell from "./app/Shell"
+import { Store } from "./models/Store"
+import { Shell } from "./app/Shell"
 
 // By default hotkeys are not enabled for INPUT SELECT TEXTAREA elements
 hotkeys.filter = () => true

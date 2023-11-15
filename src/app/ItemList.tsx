@@ -8,7 +8,7 @@ export const ItemList = inject("store")(
     useHotkeys("down", (e) => store.advanceItem(1) && e.preventDefault())
 
     return (
-      <div className={["flow-col min-w-0", className]}>
+      <div className={["flow-col", className]}>
         {items.map((item) => (
           <ItemListItem
             key={item.id}

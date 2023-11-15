@@ -10,7 +10,7 @@ import { OEmbeds } from "./OEmbeds"
 
 const disposables = []
 
-export default t
+export const Store = t
   .model("Store", {
     sources: t.optional(t.map(Source), {}),
     concurrency: t.optional(t.number, 4),

@@ -2,7 +2,7 @@ import { types as t, flow, getParent, getParentOfType } from "mobx-state-tree"
 import { parseDocument } from "../support/parseDOM"
 import { fetchDoc } from "../support/fetchDoc"
 import { Readability } from "@mozilla/readability"
-import Store from "./Store"
+import { Store } from "./Store"
 import { summarize } from "../support/processor"
 
 export const Item = t
@@ -14,7 +14,7 @@ export const Item = t
     href: t.string,
     description: t.maybeNull(t.string),
     image: t.maybeNull(t.string),
-    publishedAt: t.optional(t.Date, () => new Date()),
+    publishedAt: t.maybeNull(t.Date),
     isNew: t.optional(t.boolean, true),
     repunctuatedAt: t.maybeNull(t.Date),
   })

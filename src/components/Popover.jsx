@@ -58,10 +58,10 @@ export const Popover = ({
           (x) => `${popperStyle.transform} ${x}`,
         ),
       }}
-      className={["popover", popperPlacement, className]}
+      className={["Popover", popperPlacement, className]}
     >
       {children}
-      <div className="arrow" ref={arrowRef} style={arrowStyle} />
+      <div className="Arrow" ref={arrowRef} style={arrowStyle} />
     </animated.div>,
     document.querySelector("#root"),
   )

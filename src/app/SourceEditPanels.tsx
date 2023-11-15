@@ -7,9 +7,22 @@ import { useEffect } from "react"
 import { Inspector } from "react-inspector"
 import { EmptyPlaceholder } from "../components/EmptyPlaceholder"
 import { Heading } from "./Heading"
+import { Store } from "../models/Store"
+import { Instance } from "mobx-state-tree"
+import { ErrorBoundary } from "../components/ErrorBoundary"
+import { safeProcessor } from "../support/processor"
+import Source from "./Source"
+
+const FieldPreview: React.FC<{
+  name: string
+  activeSource: Instance<typeof Source>
+}> = ({ name, activeSource }) => {
+  const item = activeSource.lastItems[0] ?? {}
+  return <code className="text-xs ">{JSON.stringify(item[name])}</code>
+}
 
 export const SourceEditPanels = inject("store")(
-  observer(({ store }) => {
+  observer(({ store }: { store?: Instance<typeof Store> }) => {
     const { activeSource } = store
 
     useEffect(() => {
@@ -21,133 +34,164 @@ export const SourceEditPanels = inject("store")(
         <Panel
           header={<Heading>Source Preview</Heading>}
           className="flex-none w-[60ch]"
-          contentClass="space-y-2 flow-col overflow-y-auto"
+          contentClass="flow-col overflow-hidden divide-y-2"
         >
           {activeSource.lastItems.length > 0 ? (
-            <ItemList items={activeSource.lastItems} extended />
+            <ErrorBoundary>
+              <ItemList
+                className="flex-none overflow-y-auto h-96"
+                items={activeSource.lastItems}
+                extended
+              />
+              <div
+                className="Preview flex-auto overflow-y-auto p-8"
+                dangerouslySetInnerHTML={{
+                  __html: safeProcessor.processSync(
+                    activeSource.lastItems[0].description,
+                  ).value,
+                }}
+              />
+            </ErrorBoundary>
           ) : (
             <EmptyPlaceholder />
           )}
         </Panel>
         <Panel
           header={<Heading>Edit Source</Heading>}
-          contentClass={"flow-col space-y-2 px-8 py-8"}
+          contentClass={" space-y-8 px-8 py-8"}
         >
-          <div className="flow-row space-x-4">
-            <Field title="Type" className="flex-none w-[8ch]">
-              <Select
-                value={activeSource.kind}
-                onChange={(e) => {
-                  activeSource.update({ kind: e.target.value })
-                }}
-              >
-                <option value="json">JSON</option>
-                <option value="html">HTML</option>
-                <option value="xml">XML</option>
-              </Select>
-            </Field>
-            <Field title="Title" className="flex-none w-[35ch]">
+          <div className="space-y-2">
+            <Heading>General</Heading>
+            <div className="flow-row space-x-4">
+              <Field title="Type" className="flex-none w-[8ch]">
+                <Select
+                  value={activeSource.kind}
+                  onChange={(e) => {
+                    activeSource.update({ kind: e.target.value })
+                  }}
+                >
+                  <option value="json">JSON</option>
+                  <option value="html">HTML</option>
+                  <option value="xml">XML</option>
+                </Select>
+              </Field>
+              <Field title="Title" className="flex-none w-[35ch]">
+                <Input
+                  value={activeSource.title}
+                  onChange={(e) => {
+                    activeSource.update({ title: e.target.value })
+                  }}
+                />
+              </Field>
+              <Field title="Base URL">
+                <Input
+                  value={activeSource.baseURL || ""}
+                  onChange={(e) => {
+                    activeSource.update({ baseURL: e.target.value })
+                  }}
+                />
+              </Field>
+            </div>
+
+            <Field title="URL">
               <Input
-                value={activeSource.title}
+                className="font-mono"
+                value={activeSource.href}
                 onChange={(e) => {
-                  activeSource.update({ title: e.target.value })
-                }}
-              />
-            </Field>
-            <Field title="Base URL">
-              <Input
-                value={activeSource.baseURL || ""}
-                onChange={(e) => {
-                  activeSource.update({ baseURL: e.target.value })
+                  activeSource.update({ href: e.target.value })
                 }}
               />
             </Field>
           </div>
 
-          <Field title="URL">
-            <Input
-              className="font-mono"
-              value={activeSource.href}
-              onChange={(e) => {
-                activeSource.update({ href: e.target.value })
-              }}
-            />
-          </Field>
-
-          <Heading>Selectors</Heading>
-          <div className="grid grid-cols-[60ch,auto] bg-muted p-4 rounded-md overflow-hidden">
-            <div className="space-y-2">
-              <Field title="Item">
-                <Input
-                  className="font-mono"
-                  value={activeSource.selectors.item}
-                  onChange={(e) => {
-                    activeSource.selectors.update({ item: e.target.value })
-                  }}
-                />
-              </Field>
-              <Field title="Link">
-                <Input
-                  className="font-mono"
-                  value={activeSource.selectors.href}
-                  onChange={(e) => {
-                    activeSource.selectors.update({ href: e.target.value })
-                  }}
-                />
-              </Field>
-              <Field title="Title">
-                <Input
-                  className="font-mono"
-                  value={activeSource.selectors.title}
-                  onChange={(e) => {
-                    activeSource.selectors.update({ title: e.target.value })
-                  }}
-                />
-              </Field>
-              <Field title="Description">
-                <Input
-                  className="font-mono"
-                  value={activeSource.selectors.description}
-                  onChange={(e) => {
-                    activeSource.selectors.update({
-                      description: e.target.value,
-                    })
-                  }}
-                />
-              </Field>
-              <Field title="Published At">
-                <Input
-                  className="font-mono"
-                  value={activeSource.selectors.publishedAt}
-                  onChange={(e) => {
-                    activeSource.selectors.update({
-                      publishedAt: e.target.value,
-                    })
-                  }}
-                />
-              </Field>
-              <Field title="Author">
-                <Input
-                  className="font-mono"
-                  value={activeSource.selectors.author}
-                  onChange={(e) => {
-                    activeSource.selectors.update({ author: e.target.value })
-                  }}
-                />
-              </Field>
-              <Field title="Image">
-                <Input
-                  className="font-mono"
-                  value={activeSource.selectors.image}
-                  onChange={(e) => {
-                    activeSource.selectors.update({ image: e.target.value })
-                  }}
-                />
-              </Field>
-            </div>
-            <div className="p-6 overflow-auto">
-              <div className="bg-white rounded-md p-4">
-                <Inspector data={activeSource.preview} expandLevel={5} />
+          <div className="space-y-2">
+            <Heading>Selectors</Heading>
+            <div className="grid grid-cols-[60ch,auto] bg-muted p-4 rounded-md overflow-hidden">
+              <div className="space-y-2">
+                <Field title="Item">
+                  <Input
+                    className="font-mono"
+                    value={activeSource.selectors.item}
+                    onChange={(e) => {
+                      activeSource.selectors.update({ item: e.target.value })
+                    }}
+                  />
+                </Field>
+                <Field title="Link" className="space-y-1">
+                  <Input
+                    className="font-mono"
+                    value={activeSource.selectors.href}
+                    onChange={(e) => {
+                      activeSource.selectors.update({ href: e.target.value })
+                    }}
+                  />
+                  <FieldPreview name="href" activeSource={activeSource} />
+                </Field>
+                <Field title="Title">
+                  <Input
+                    className="font-mono"
+                    value={activeSource.selectors.title}
+                    onChange={(e) => {
+                      activeSource.selectors.update({ title: e.target.value })
+                    }}
+                  />
+                  <FieldPreview name="title" activeSource={activeSource} />
+                </Field>
+                <Field title="Description">
+                  <Input
+                    className="font-mono"
+                    value={activeSource.selectors.description}
+                    onChange={(e) => {
+                      activeSource.selectors.update({
+                        description: e.target.value,
+                      })
+                    }}
+                  />
+                  <FieldPreview
+                    name="description"
+                    activeSource={activeSource}
+                  />
+                </Field>
+                <Field title="Published At">
+                  <Input
+                    className="font-mono"
+                    value={activeSource.selectors.publishedAt}
+                    onChange={(e) => {
+                      activeSource.selectors.update({
+                        publishedAt: e.target.value,
+                      })
+                    }}
+                  />
+                  <FieldPreview
+                    name="publishedAt"
+                    activeSource={activeSource}
+                  />
+                </Field>
+                <Field title="Author">
+                  <Input
+                    className="font-mono"
+                    value={activeSource.selectors.author}
+                    onChange={(e) => {
+                      activeSource.selectors.update({ author: e.target.value })
+                    }}
+                  />
+                  <FieldPreview name="author" activeSource={activeSource} />
+                </Field>
+                <Field title="Image">
+                  <Input
+                    className="font-mono"
+                    value={activeSource.selectors.image}
+                    onChange={(e) => {
+                      activeSource.selectors.update({ image: e.target.value })
+                    }}
+                  />
+                  <FieldPreview name="image" activeSource={activeSource} />
+                </Field>
+              </div>
+              <div className="p-6 overflow-auto">
+                <div className="bg-white rounded-md p-4">
+                  <Inspector data={activeSource.preview} expandLevel={5} />
+                </div>
               </div>
             </div>
           </div>

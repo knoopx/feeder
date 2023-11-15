@@ -41,7 +41,7 @@
   @apply text-pink-400;
 }
 .hljs-literal {
-  @apply text-green-500
+  @apply text-green-500;
 }
 .hljs-built_in,
 .hljs-bullet,

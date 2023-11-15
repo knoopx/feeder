@@ -4,7 +4,7 @@ import { Panel, HeaderButton, FavIcon, Preview, TimeAgo } from "../components"
 import { MdOpenInBrowser, MdPerson, MdWeekend } from "react-icons/md"
 import { Instance } from "mobx-state-tree"
 import { EmptyPlaceholder } from "../components/EmptyPlaceholder"
-import Store from "../models/Store"
+import { Store } from "../models/Store"
 
 export const ItemPanel = inject("store")(
   observer(
@@ -37,7 +37,7 @@ export const ItemPanel = inject("store")(
                   <MdWeekend size="1.25rem" />
                 </HeaderButton>
 
-                <HeaderButton href={item.href}>
+                <HeaderButton href={item.href} target="_blank">
                   <MdOpenInBrowser size="1.25rem" />
                 </HeaderButton>
               </div>
@@ -50,7 +50,10 @@ export const ItemPanel = inject("store")(
                 <div className="flex justify-between mb-2 text-muted">
                   <div className="flow-row items-center">
                     <div className="flex items-center">
-                      <FavIcon className="mr-2" src={item.source.baseURL || item.source.href} />{" "}
+                      <FavIcon
+                        className="mr-2"
+                        src={item.source.baseURL || item.source.href}
+                      />{" "}
                       {item.source.title}
                     </div>
                     {item.author && (

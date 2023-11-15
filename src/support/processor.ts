@@ -11,22 +11,22 @@ export const processor = unified()
     duplicateAttribute: false,
   })
 
-  // .use(rehypeHighlight)
+  .use(rehypeHighlight, { ignoreMissing: true })
   .use(rehypeStringify)
 
-export const safeProcessor = processor().use(rehypeSanitize, {
-  strip: ["script", "style"],
-  tagNames: [...defaultSchema.tagNames, "iframe"],
-  attributes: {
-    ...defaultSchema.attributes,
-    "*": defaultSchema.attributes["*"].filter(
-      (x) => !["width", "height"].includes(x),
-    ),
-    // a: ["href", "target", "rel"],
-    // img: ["src", "srcset", "alt", "title"],
-    iframe: ["allow", "allowfullscreen", "src"],
-  },
-})
+export const safeProcessor = processor()
+//   .use(rehypeSanitize, {
+//   ...defaultSchema,
+//   strip: ["script", "style"],
+//   tagNames: [...defaultSchema.tagNames, "iframe", "big"],
+//   attributes: {
+//     ...defaultSchema.attributes,
+//     "*": defaultSchema.attributes["*"].filter(
+//       (x) => !["width", "height"].includes(x),
+//     ),
+//     iframe: ["allow", "allowfullscreen", "src"],
+//   },
+// })
 
 export function summarize(doc?: Document) {
   const text = doc?.body?.outerHTML

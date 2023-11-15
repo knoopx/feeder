@@ -1,8 +1,7 @@
 import { Spinner } from "."
 import { inject, observer } from "mobx-react"
 import { useEffect } from "react"
-
-import { processor, safeProcessor } from "../support/processor"
+import { safeProcessor } from "../support/processor"
 
 export const Preview = inject("store")(
   observer(({ store, item, className }) => {
@@ -34,7 +33,7 @@ export const Preview = inject("store")(
 
     return (
       <div
-        className={["preview w-[80ch]", className]}
+        className={["Preview", className]}
         dangerouslySetInnerHTML={{
           __html: safeProcessor.processSync(html).value,
         }}

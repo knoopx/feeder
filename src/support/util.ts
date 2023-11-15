@@ -3,6 +3,11 @@ import { isEmpty } from "lodash"
 import moment from "moment"
 import { parseDocument } from "./parseDOM"
 
+import * as dateFns from 'date-fns'
+import _parseHumanRelative from 'parse-human-relative-time/date-fns'
+
+const parseHumanRelative = _parseHumanRelative(dateFns)
+
 const trim = (value) => {
   if (typeof value === "string") return value.trim()
 
@@ -27,7 +32,10 @@ export function parseSimpleInput(input) {
 // person@name | toUpperCase()
 export function parseInput(input: string) {
   const { selector: selectorWithAttrName, filters } = parseSimpleInput(input)
-  const [selector, attrName = "textContent"] = selectorWithAttrName.split("@", 2)
+  const [selector, attrName = "textContent"] = selectorWithAttrName.split(
+    "@",
+    2,
+  )
   return {
     selector: trim(selector),
     attrName: trim(attrName),
@@ -91,6 +99,15 @@ function makeContext(result: any) {
     toDate(format: string) {
       if (!format) return new Date(result)
       return moment(result, format).toDate()
+    },
+    relativeDate(){
+      return parseHumanRelative(result, new Date())
+    },
+    last() {
+      if (Array.isArray(result)) {
+        return result[result.length - 1]
+      }
+      return result
     },
     q(selector: string) {
       const doc = typeof result === "string" ? parseDocument(result) : result
