@@ -22,7 +22,7 @@ const tryFetchImage = async (url) => {
   }
 }
 
-const match = q(["link[rel*='icon']@href"])
+const match = q("link[rel*='icon']@href")
 
 const resolveIcons = async (src: string) => {
   cache.set(src, "")
@@ -48,11 +48,15 @@ const resolveIcons = async (src: string) => {
 }
 
 export const FavIcon = observer(({ src, className, ...props }) => {
-  const { origin } = src ? new URL(src) : { origin: null }
-  const iconSrc = cache.get(origin)
+  let origin: string | null = null
+  try {
+    const url = new URL(src)
+    origin = url.origin
+  } catch (err) {}
 
+  const iconSrc = cache.get(origin)
   useEffect(() => {
-    if (src && !iconSrc) {
+    if (src && origin && !iconSrc) {
       resolveIcons(origin)
     }
   }, [src, iconSrc])

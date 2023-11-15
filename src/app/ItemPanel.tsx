@@ -15,7 +15,7 @@ export const ItemPanel = inject("store")(
       store?: Instance<typeof Store>
     } & PropsWithChildren<Panel>) => {
       useEffect(() => {
-        item?.markAsRead()
+        item?.update({ isNew: false })
       }, [item])
 
       return (

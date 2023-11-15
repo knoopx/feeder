@@ -6,20 +6,13 @@ import { types as t, flow, getParent, destroy, Instance } from "mobx-state-tree"
 import { fetchDoc } from "../support/fetchDoc"
 import { summarize } from "../support/processor"
 import { parseDocument } from "../support/parseDOM"
+import sha256 from "sha256"
 
 const disposables: (() => void)[] = []
 
-const sha256 = async (x: string) => {
-  const buffer = new TextEncoder().encode(x)
-  const hash = await crypto.subtle.digest("SHA-256", buffer)
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("")
-}
-
 const parseDOM = (doc: Document, selectors: Instance<typeof Selectors>) => {
   const { item, ...rest } = selectors
-  return q([item], rest)(doc)
+  return q(item, rest)(doc)
 }
 
 const Selectors = t
@@ -157,12 +150,16 @@ export const Source = t
         }
       }
 
-      self.lastItems = adapter().map((props, i) => ({
-        id: self.href + props.href + i,
-        ...props,
-        summary: summarize(parseDocument(props.description)),
-        source: self,
-      }))
+      self.lastItems = adapter().map((props, i) => {
+        return {
+          id: sha256(self.href + props.href).slice(0, 8),
+          ...props,
+          summary: props.description
+            ? summarize(parseDocument(props.description))
+            : null,
+          source: self,
+        }
+      })
     },
     fetch: flow(function* (onlyFetch = false) {
       try {

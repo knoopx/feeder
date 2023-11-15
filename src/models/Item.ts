@@ -8,8 +8,7 @@ import { summarize } from "../support/processor"
 export const Item = t
   .model("Item", {
     id: t.identifier,
-    // id: t.optional(t.identifier, () => Math.random().toString(36).substr(2, 9)),
-    title: t.string,
+    title: t.maybeNull(t.string),
     author: t.maybeNull(t.string),
     href: t.string,
     description: t.maybeNull(t.string),
@@ -43,8 +42,8 @@ export const Item = t
     readableDescription: false,
   }))
   .actions((self) => ({
-    markAsRead() {
-      self.isNew = false
+    update(props: Partial<typeof self>) {
+      Object.assign(self, props)
     },
     makeReadable: flow(function* () {
       const doc = yield fetchDoc(self.href)

@@ -9,6 +9,9 @@ import "./index.css"
 import { Store } from "./models/Store"
 import { Shell } from "./app/Shell"
 
+import moment from "moment"
+
+globalThis.moment = moment
 // By default hotkeys are not enabled for INPUT SELECT TEXTAREA elements
 hotkeys.filter = () => true
 

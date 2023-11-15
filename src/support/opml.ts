@@ -3,7 +3,7 @@ import fs from "fs"
 
 import { parseDocument } from "./parseDOM"
 
-const parseSources = q(["outline[type='rss']"], {
+const parseSources = q("outline[type='rss']", {
   title: "@title",
   href: "@xmlUrl",
 })

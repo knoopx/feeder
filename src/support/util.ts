@@ -1,94 +1,84 @@
 import q from "../support/q"
-import { isEmpty } from "lodash"
 import moment from "moment"
 import { parseDocument } from "./parseDOM"
 
-import * as dateFns from 'date-fns'
-import _parseHumanRelative from 'parse-human-relative-time/date-fns'
+import * as dateFns from "date-fns"
+import _parseHumanRelative from "parse-human-relative-time/date-fns"
+import { isArray, isString, isEmpty, isFunction } from "lodash"
 
 const parseHumanRelative = _parseHumanRelative(dateFns)
 
-const trim = (value) => {
-  if (typeof value === "string") return value.trim()
+const nullify = (x: any) => (isEmpty(x) ? null : x)
 
+const autoValue = (
+  input: Element | string | Element[] | string[],
+): string | null => {
+  if (isArray(input)) {
+    return nullify(autoValue(input[0]))
+  }
+
+  if (isString(input)) {
+    return nullify(input.trim())
+  }
+  if (input instanceof Document) {
+    return input.documentElement.innerHTML
+  }
+
+  if (input instanceof Element) {
+    return nullify(input.textContent?.trim())
+  }
+
+  return input
+}
+
+export const trim = (value: any) => {
+  if (typeof value === "string") return value.trim()
   return value
 }
-// person | toUpperCase()
-export function parseSimpleInput(input) {
-  if (isEmpty(input))
-    return {
-      selector: "",
-      filters: [],
+
+export function evalInScope(js: string, contextAsScope: object) {
+  try {
+    const result = new Function(`with (this) { return (${js}); }`).call(
+      contextAsScope,
+    )
+    if (isFunction(result)) {
+      return result.call(contextAsScope)
     }
-
-  const [selectorWithAttrName, ...filters] = input.split("|")
-
-  return {
-    selector: trim(selectorWithAttrName),
-    filters: filters.map(trim),
+    return result
+  } catch (e) {
+    return e.message
   }
 }
 
-// person@name | toUpperCase()
-export function parseInput(input: string) {
-  const { selector: selectorWithAttrName, filters } = parseSimpleInput(input)
-  const [selector, attrName = "textContent"] = selectorWithAttrName.split(
-    "@",
-    2,
-  )
+export function makeContext(result: any) {
   return {
-    selector: trim(selector),
-    attrName: trim(attrName),
-    filters,
-  }
-}
-
-export function getAttrOrProp(attrName: string) {
-  return (el: Element) => {
-    if (!el) return null
-
-    if (isEmpty(attrName)) {
-      return el
-    }
-    if (el.hasAttribute(attrName)) {
-      return trim(el.getAttribute(attrName))
-    }
-    return trim(el[attrName])
-
-    // return trim(eval(`this.${attrName}`)).call(node)
-  }
-}
-
-function evalInScope(js: string, contextAsScope: object) {
-  return new Function(`with (this) { return (${js}); }`).call(contextAsScope)
-}
-
-function makeContext(result: any) {
-  return {
-    value: result,
+    value: autoValue(result),
     lower() {
-      return result.toLocaleLowerCase()
+      return autoValue(result).toLocaleLowerCase()
     },
     upper() {
-      return result.toLocaleUpperCase()
+      return autoValue(result).toLocaleUpperCase()
     },
     capitalize() {
       return result[0].toLocaleUpperCase() + result.slice(1).toLocaleLowerCase()
     },
     split(separator: string) {
-      return result.split(separator)
+      return autoValue(result).split(separator)
     },
     join(separator: string) {
       if (!Array.isArray(result)) {
         result = [result]
       }
-      return result.join(separator)
+      return result.map(autoValue).join(separator)
     },
     replace(search: string, replace: string) {
-      return result.replace(search, replace)
+      return autoValue(result).replace(search, replace)
+    },
+    auto() {
+      return autoValue(result)
     },
     trim() {
-      return result.trim()
+      return trim(result)
     },
     append(text: string) {
       return result + text
@@ -96,12 +86,20 @@ function makeContext(result: any) {
     prepend(text: string) {
       return text + result
     },
-    toDate(format: string) {
-      if (!format) return new Date(result)
-      return moment(result, format).toDate()
+    date(format: string) {
+      const value = autoValue(result)
+      if (!format) return new Date(value)
+      if (format === "iso") return Date.parse(value)
+      return moment(value, format).toDate()
     },
-    relativeDate(){
+    relativeDate() {
       return parseHumanRelative(result, new Date())
+    },
+    first() {
+      if (Array.isArray(result)) {
+        return result[0]
+      }
+      return result
     },
     last() {
       if (Array.isArray(result)) {
@@ -110,19 +108,10 @@ function makeContext(result: any) {
       return result
     },
     q(selector: string) {
-      const doc = typeof result === "string" ? parseDocument(result) : result
-      return q(selector)(doc)
+      const value = autoValue(result)
+      const doc = parseDocument(value ?? "", "text/html")
+      const results = q(selector)(doc)
+      return results
     },
   }
-}
-
-export function applyFilters(filters: string[]) {
-  return (value: string) =>
-    filters.reduce((result, filter) => {
-      if (result) {
-        const context = makeContext(result)
-        return trim(evalInScope(filter, context))
-      }
-      return null
-    }, value)
 }

@@ -4,7 +4,7 @@ import { inject, observer, useLocalStore } from "mobx-react"
 import { MdError } from "react-icons/md"
 import { fetchDoc } from "../support/fetchDoc"
 
-const findFeeds = q(["link[type='application/rss+xml']@href"])
+const findFeeds = q("link[type='application/rss+xml']@href")
 
 export const AddSourcePopover = inject("store")(
   observer(({ store, onDismiss, ...props }) => {

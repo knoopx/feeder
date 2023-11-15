@@ -1,129 +1,102 @@
-import { flow, isString, isFunction, isObject, isArray, isEmpty } from "lodash"
 import sizzle from "sizzle"
+import { flow, isFunction, isObject, isString, isEmpty } from "lodash"
+import { trim, makeContext, evalInScope } from "./util"
 
-import { applyFilters, getAttrOrProp, parseInput } from "./util"
+type Transform = (val: string) => string | object
 
-// {
-//   value: 'a@href',
-//   array: ['a@href'],
-//   transform: $('a@href', (href) => href.reverse() ),
-//   fn: (el) => el.querySelector('[title]'),
-// }
-function $object(schema: { [key: string]: any }) {
+type Schema = { [key: string]: any }
+function $schema(schema: Schema) {
   return (el: Document | Element) =>
     Object.keys(schema).reduce((result, propName) => {
       const value = schema[propName]
       if (isEmpty(value)) {
-        result[propName] = ""
+        result[propName] = null
       } else if (isFunction(value)) {
         result[propName] = value(el)
-      } else {
+      } else if (isString(value)) {
         result[propName] = $(value)(el)
+      } else {
+        throw new Error(`Invalid schema value: ${value}`)
       }
       return result
     }, {})
 }
 
-// $(['a'], (val) => val)
-// $(['.thumb-container'], {
-//   key: 'a@href',
-//   title: '.title@textContent',
-//   thumbs: ['img@src | replace("-small", "")'],
-// })
-//
-function $all(input: string, transform: (val: string) => string) {
-  return (doc: Document) => {
-    const { selector, attrName, filters } = parseInput(input)
+export default function $(expr: string, transform?: Transform) {
+  return (el: Document | Element) => {
+    let { selector, propName, filters } = $expr(expr)
 
-    if (!selector) return []
+    // person
+    if (isEmpty(selector) && isEmpty(propName)) return []
 
-    // const results = Array.from(doc.querySelectorAll(selector))
-    const results = sizzle(selector, doc)
-    if (isFunction(transform)) {
-      if (input.includes("@")) {
-        return results.map(
-          flow(getAttrOrProp(attrName), applyFilters(filters), transform),
-        )
-      }
-      return results.map(transform)
+    const elements = isEmpty(selector) ? [el] : sizzle(selector, el)
+    // if (isFunction(transform)) {
+    //   if (expr.includes("@")) {
+    //     return elements.map(flow($prop(propName), $filter(filters), transform))
+    //   }
+    //   return elements.map(transform)
+    // } else
+    if (!transform) {
+      const vals = $prop(propName)(elements)
+      // const chain = $filter(filters)
+      const chain = $filter([...filters, "auto"])
+      return chain(vals)
     }
-
     if (isObject(transform)) {
-      return results.map($object(transform))
+      return elements.map($schema(transform))
     }
-
-    return results.map(flow(getAttrOrProp(attrName), applyFilters(filters)))
   }
 }
 
-// $('@href')
-// $('a@href')
-// $('a@href', (href) => href)
-function $first(input, transform = (val) => val) {
-  return (doc) => {
-    if (isString(input)) {
-      const { selector, attrName, filters } = parseInput(input)
+function _expr(expr: string) {
+  if (!isString(expr)) throw new Error(`Invalid expr: ${JSON.stringify(expr)}`)
 
-      if (selector) {
-        // return flow(
-        //   getAttrOrProp(attrName),
-        //   applyFilters(filters),
-        //   transform,
-        // )(doc.querySelector(selector))
-        return flow(
-          getAttrOrProp(attrName),
-          applyFilters(filters),
-          transform,
-        )(sizzle(selector, doc)[0])
+  if (isEmpty(expr))
+    return {
+      selector: "",
+      filters: [],
+    }
+
+  const [selector_propName, ...filters] = expr.split("|")
+
+  return {
+    selector: trim(selector_propName),
+    filters: filters.map(trim),
+  }
+}
+
+export function $expr(expr: string) {
+  const { selector: selector_propName, filters } = _expr(expr)
+  let [selector, propName] = selector_propName.split("@", 2)
+
+  return {
+    selector: trim(selector),
+    propName: trim(propName),
+    filters,
+  }
+}
+
+export function $prop(propName: string) {
+  return (elements: Element[]) => {
+    if (!elements) return null
+
+    if (isEmpty(propName)) {
+      return elements
+    }
+
+    return elements.map((el) => {
+      if (el.hasAttribute(propName)) {
+        return trim(el.getAttribute(propName))
       }
-
-      return flow(
-        getAttrOrProp(attrName),
-        applyFilters(filters),
-        transform,
-      )(doc)
-    }
-
-    // $({ href : "a@href" })
-    // $({ href : "a@href" }, (res) => res.href )
-    if (isObject(input)) {
-      return flow($object(input), transform)(doc)
-    }
-
-    throw new Error(`Invalid query: ${JSON.stringify(input)}`)
+      return trim(el[propName])
+    })
   }
 }
 
-export default function $(input: string, ...opts) {
-  // $(["query"], ...)
-  if (isArray(input)) {
-    if (input.length === 1) {
-      return $all(...[...input, ...opts])
-    }
-    throw new Error(`Invalid query: ${JSON.stringify(input)}`)
-  }
-  // $("div@attr", ...)
-  // $("@attr", ...)
-  // $({key: "value"}, ...)
-  if (isString(input) || isObject(input)) {
-    return $first(input, ...opts)
-  }
-
-  throw new Error(`Invalid query: ${JSON.stringify(input)}`)
+export function $filter(filters: string[]) {
+  return (value: any) =>
+    filters.reduce((result, filter) => {
+      const context = makeContext(result)
+      return evalInScope(filter, context)
+    }, value)
 }
-
-// export default (doc) =>
-//   ({ item, ...selectors }) => {
-//     return $(
-//       [item],
-//       Object.keys(selectors)
-//         .filter((key) => selectors[key])
-//         .reduce(
-//           (acc, key) => ({
-//             ...acc,
-//             [key]: $(selectors[key]),
-//           }),
-//           {},
-//         ),
-//     )(doc)
-//   }

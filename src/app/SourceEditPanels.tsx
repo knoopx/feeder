@@ -18,12 +18,51 @@ const FieldPreview: React.FC<{
   activeSource: Instance<typeof Source>
 }> = ({ name, activeSource }) => {
   const item = activeSource.lastItems[0] ?? {}
-  return <code className="text-xs ">{JSON.stringify(item[name])}</code>
+  return <Inspector data={item[name]} />
+
+  // return <code className="text-xs truncate">{JSON.stringify(item[name])}</code>
 }
+
+const InspectorTable: React.FC<{
+  activeSource: unknown
+  props: string[]
+}> = ({ activeSource, props }) => (
+  <table>
+    <thead>
+      <tr>
+        {props.map((key) => (
+          <th key={key} className="border">
+            {key}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {activeSource.lastItems.map((item) => (
+        <tr key={item.href}>
+          {props.map((key) => (
+            <td key={key} className="border max-w-[20ch] truncate">
+              <Inspector data={item[key]} />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+)
 
 export const SourceEditPanels = inject("store")(
   observer(({ store }: { store?: Instance<typeof Store> }) => {
     const { activeSource } = store
+
+    const props = [
+      "href",
+      "title",
+      "description",
+      "author",
+      "publishedAt",
+      "image",
+    ]
 
     useEffect(() => {
       activeSource.fetch(true)
@@ -95,7 +134,7 @@ export const SourceEditPanels = inject("store")(
 
             <Field title="URL">
               <Input
-                className="font-mono"
+                className="font-mono text-sm"
                 value={activeSource.href}
                 onChange={(e) => {
                   activeSource.update({ href: e.target.value })
@@ -110,7 +149,7 @@ export const SourceEditPanels = inject("store")(
               <div className="space-y-2">
                 <Field title="Item">
                   <Input
-                    className="font-mono"
+                    className="font-mono text-sm"
                     value={activeSource.selectors.item}
                     onChange={(e) => {
                       activeSource.selectors.update({ item: e.target.value })
@@ -119,7 +158,7 @@ export const SourceEditPanels = inject("store")(
                 </Field>
                 <Field title="Link" className="space-y-1">
                   <Input
-                    className="font-mono"
+                    className="font-mono text-sm"
                     value={activeSource.selectors.href}
                     onChange={(e) => {
                       activeSource.selectors.update({ href: e.target.value })
@@ -129,7 +168,7 @@ export const SourceEditPanels = inject("store")(
                 </Field>
                 <Field title="Title">
                   <Input
-                    className="font-mono"
+                    className="font-mono text-sm"
                     value={activeSource.selectors.title}
                     onChange={(e) => {
                       activeSource.selectors.update({ title: e.target.value })
@@ -139,7 +178,7 @@ export const SourceEditPanels = inject("store")(
                 </Field>
                 <Field title="Description">
                   <Input
-                    className="font-mono"
+                    className="font-mono text-sm"
                     value={activeSource.selectors.description}
                     onChange={(e) => {
                       activeSource.selectors.update({
@@ -154,7 +193,7 @@ export const SourceEditPanels = inject("store")(
                 </Field>
                 <Field title="Published At">
                   <Input
-                    className="font-mono"
+                    className="font-mono text-sm"
                     value={activeSource.selectors.publishedAt}
                     onChange={(e) => {
                       activeSource.selectors.update({
@@ -169,7 +208,7 @@ export const SourceEditPanels = inject("store")(
                 </Field>
                 <Field title="Author">
                   <Input
-                    className="font-mono"
+                    className="font-mono text-sm"
                     value={activeSource.selectors.author}
                     onChange={(e) => {
                       activeSource.selectors.update({ author: e.target.value })
@@ -179,7 +218,7 @@ export const SourceEditPanels = inject("store")(
                 </Field>
                 <Field title="Image">
                   <Input
-                    className="font-mono"
+                    className="font-mono text-sm"
                     value={activeSource.selectors.image}
                     onChange={(e) => {
                       activeSource.selectors.update({ image: e.target.value })
@@ -190,10 +229,35 @@ export const SourceEditPanels = inject("store")(
               </div>
               <div className="p-6 overflow-auto">
                 <div className="bg-white rounded-md p-4">
-                  <Inspector data={activeSource.preview} expandLevel={5} />
+                  {activeSource.kind === "html" ? (
+                    activeSource.document && (
+                      <iframe
+                        src={
+                          "data:text/html," +
+                          encodeURIComponent(
+                            activeSource.document.documentElement.outerHTML,
+                          )
+                        }
+                      />
+                    )
+                  ) : (
+                    <Inspector data={activeSource.preview} expandLevel={3} />
+                    // <pre className="">
+                    //   {activeSource.preview.documentElement.outerHTML}
+                    // </pre>
+                  )}
                 </div>
               </div>
             </div>
+            {/* <Inspector
+              table
+              className="w-full"
+              data={Object.fromEntries(
+                activeSource.lastItems.map((i) => [i.href, i]),
+              )}
+              columns={["title", "description", "author", "publishedAt"]}
+            /> */}
+            {/* <InspectorTable activeSource={activeSource} props={props} /> */}
           </div>
         </Panel>
       </>

@@ -27,15 +27,6 @@ const ItemListItemSource: React.FC<{
   </div>
 )
 
-const ItemListItemTitle: React.FC<{
-  item: Instance<typeof Item>
-}> = ({ item }) => (
-  <div className="flow-row items-center mb-2 leading-none">
-    {item.isNew && <Indicator className="-ml-4 mr-2 flex-none" />}
-    <div className="font-medium">{item.title}</div>
-  </div>
-)
-
 const ItemListItemSummary: React.FC<
   {
     item: Instance<typeof Item>
@@ -92,7 +83,6 @@ export const ItemListItem = observer(
             )}
 
             <div className="flow-col overflow-x-hidden">
-              {/* {!isEmpty(item.title) && <ItemListItemTitle item={item} />} */}
               <div className="font-medium">{item.title}</div>
               <div className="flex-auto">
                 {!isEmpty(item.summary) && <ItemListItemSummary item={item} />}
