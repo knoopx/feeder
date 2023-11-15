@@ -1,17 +1,19 @@
-import React, { forwardRef, useRef } from "react"
+import { useRef } from "react"
+import { productName } from "../../package.json"
 import {
   MdRefresh,
   MdFileDownload,
   MdModeEdit,
   MdAddCircle,
 } from "react-icons/md"
-import { Header, HeaderButton, Spinner } from "../../components"
+import { Panel, HeaderButton, Spinner } from "../components"
 import { inject, observer, useLocalStore } from "mobx-react"
 
-import { AddSourcePopover } from "./AddSourcePopover"
+import { AddSourcePopover } from "../components/AddSourcePopover"
 import { SourceList } from "./SourceList"
+import { Heading } from "./Heading"
 
-export const SourceListColumn = inject("store")(
+export const SourceListPanel = inject("store")(
   observer(({ store, className, ...props }) => {
     const ref = useRef()
 
@@ -27,7 +29,6 @@ export const SourceListColumn = inject("store")(
     const onAdd = () => {
       state.isPopoverOpen = true
     }
-
 
     const onImport = async () => {
       const { filePaths } = await dialog.showOpenDialog({
@@ -48,34 +49,32 @@ export const SourceListColumn = inject("store")(
     }
 
     return (
-      <div className={["relative", className]} {...props}>
-        <Header className="border-pink-700 border-r">
-          <div className="flex flex-auto items-center">
-            <div className="text-xl font-medium font-logo">
-              Reeder
-            </div>
-            <div className="flex flex-auto justify-end">
-              <HeaderButton ref={ref} className="mr-2" onClick={onAdd}>
+      <Panel
+        {...props}
+        className={["relative", className]}
+        header={
+          <div className="flex flex-auto items-center justify-between">
+            <Heading>{productName}</Heading>
+            <div className="flex divide-pink-500 divide-x">
+              <HeaderButton ref={ref} className="px-2" onClick={onAdd}>
                 <MdAddCircle size="1.25rem" />
               </HeaderButton>
               {state.isPopoverOpen && (
                 <AddSourcePopover
+                  className="px-2"
                   referenceElement={ref}
                   onDismiss={() => {
                     state.isPopoverOpen = false
                   }}
                 />
               )}
-              <HeaderButton
-                className="mr-4 pr-4 border-pink-500 border-r"
-                onClick={onImport}
-              >
+              <HeaderButton className="px-2" onClick={onImport}>
                 <MdFileDownload size="1.25rem" />
               </HeaderButton>
 
               <HeaderButton
                 className={[
-                  "mr-4 pr-4 border-pink-500 border-r",
+                  "px-2",
                   {
                     "text-white": store.isEditing,
                   },
@@ -85,16 +84,14 @@ export const SourceListColumn = inject("store")(
                 <MdModeEdit size="1.25rem" />
               </HeaderButton>
 
-              <HeaderButton onClick={onRefresh}>
+              <HeaderButton className="px-2" onClick={onRefresh}>
                 <MdRefresh size="1.25rem" />
               </HeaderButton>
             </div>
           </div>
-        </Header>
-
-        <div className="flex flex-auto flex-col overflow-hidden border-r">
-          <SourceList editMode={store.isEditing} />
-        </div>
+        }
+      >
+        <SourceList editMode={store.isEditing} />
 
         {store.pending.length > 0 && (
           <div className="absolute inset-0 top-auto flex items-center m-2 px-4 py-1 rounded shadow bg-gray-800 text-shadow text-sm text-white font-medium">
@@ -105,7 +102,7 @@ export const SourceListColumn = inject("store")(
             </div>
           </div>
         )}
-      </div>
+      </Panel>
     )
   }),
 )

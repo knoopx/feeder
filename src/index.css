@@ -6,29 +6,98 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  font-size: 13px;
+@layer utilities {
+  .flow-row {
+    @apply flex default:flex-grow;
+  }
+
+  .flow-col {
+    @apply flex flex-col default:flex-grow;
+  }
+
+  .text-shadow {
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+  }
+
+  .text-muted {
+    @apply text-gray-600;
+  }
+
+  .bg-muted {
+    @apply bg-gray-50;
+  }
+
+  .active {
+    .text-muted {
+      @apply text-pink-300;
+    }
+  }
 }
 
-* {
-  -webkit-font-smoothing: antialiased;
+@layer base {
+  html {
+    font-size: 13px;
+  }
+
+  * {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    @apply text-pink-500 no-underline;
+  }
+
+  #root {
+    @apply flex flex-auto bg-white overflow-hidden h-screen;
+  }
+
+  iframe {
+    @apply w-full aspect-video;
+  }
 }
 
-a {
-  @apply text-pink-500 no-underline;
-}
+@layer components {
+  .Heading {
+    @apply text-xl font-medium;
+  }
+  .Input {
+    @apply appearance-none outline-none flex-auto mr-2 py-1 bg-transparent text-white placeholder-pink-500;
+  }
+  .Panel {
+    @apply flow-col;
 
-#root {
-  @apply flex flex-auto bg-white overflow-hidden h-screen;
-}
+    .PanelHeader {
+      @apply justify-between border-pink-700 select-none flex overflow-hidden items-center px-4 bg-pink-800 text-white leading-none min-h-[48px];
+    }
 
-.text-shadow {
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-}
+    .PanelContent {
+      @apply flex flex-auto overflow-y-auto;
+    }
+  }
 
-.truncate-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  .PanelContainer {
+    @apply flow-row;
+
+    .PanelHeader {
+      @apply border-pink-700 border-r;
+    }
+    .PanelContent {
+      @apply border-r;
+    }
+  }
+
+  .ItemListItem {
+    @apply flow-col flex-none justify-between cursor-pointer select-none max-w-full px-6 py-3 border-b space-x-2;
+    &.active {
+      @apply bg-pink-600 text-white;
+    }
+  }
+
+  .ItemListItemSummary {
+    @apply flex-none text-sm leading-tight line-clamp-2 text-muted;
+  }
+
+  .ItemListItemAuthor {
+    @apply flow-row items-center space-x-1 text-xs;
+  }
 }

@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from "react"
+import { useRef, useEffect } from "react"
 import { inject, observer } from "mobx-react"
 import { MdError, MdDelete } from "react-icons/md"
-import { Spinner, AnimatedBadge, FavIcon, TimeAgo } from "../../components"
+import { Spinner, AnimatedBadge, FavIcon, TimeAgo } from "../components"
 
 const Source = ({ source, isActive, className, editMode, store, ...props }) => {
   const ref = useRef()
@@ -37,7 +37,7 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
       >
         <div
           className={[
-            "flex flex-auto flex-col max-w-full min-w-0",
+            "flow-col max-w-full min-w-0",
             {
               "font-semibold": isActive,
             },
@@ -49,13 +49,13 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
                 <MdError size="1.25rem" />
               </span>
             ) : (
-              <FavIcon className="mr-2" src={source.href} />
+              <FavIcon className="mr-2" src={source.baseURL || source.href} />
             )}
             <div className="min-w-0 truncate">{source.title}</div>
           </div>
           {source.updatedAt > 0 && (
             <TimeAgo
-              className="ml-6 text-gray-600 text-xs"
+              className="ml-6 text-muted text-xs"
               since={source.updatedAt}
             />
           )}
@@ -65,13 +65,13 @@ const Source = ({ source, isActive, className, editMode, store, ...props }) => {
           {source.isLoading ? (
             <Spinner size="1.25rem" className="ml-4" />
           ) : editMode ? (
-            <a className="text-gray-600" onClick={onRemove}>
+            <a className="text-muted" onClick={onRemove}>
               <MdDelete size="1.25rem" />
             </a>
           ) : (
             source.newItemsCount > 0 && (
               <AnimatedBadge
-                className={["ml-4 text-gray-600"]}
+                className={["ml-4 text-muted"]}
                 value={source.newItemsCount}
               />
             )

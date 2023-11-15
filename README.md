@@ -1,3 +1,3 @@
-# Reeder
+# barbarian
 
 ![Screenshot](screenshot.png)

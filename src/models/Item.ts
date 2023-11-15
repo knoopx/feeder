@@ -1,7 +1,9 @@
-import { types as t, flow, getParent } from "mobx-state-tree"
+import { types as t, flow, getParent, getParentOfType } from "mobx-state-tree"
 import { parseDocument } from "../support/parseDOM"
 import { fetchDoc } from "../support/fetchDoc"
-import { Readability } from "readability"
+import { Readability } from "@mozilla/readability"
+import Store from "./Store"
+import { summarize } from "../support/processor"
 
 export const Item = t
   .model("Item", {
@@ -9,26 +11,32 @@ export const Item = t
     // id: t.optional(t.identifier, () => Math.random().toString(36).substr(2, 9)),
     title: t.string,
     author: t.maybeNull(t.string),
-    link: t.string,
+    href: t.string,
     description: t.maybeNull(t.string),
+    image: t.maybeNull(t.string),
     publishedAt: t.optional(t.Date, () => new Date()),
     isNew: t.optional(t.boolean, true),
+    repunctuatedAt: t.maybeNull(t.Date),
   })
   .views((self) => ({
     get source() {
       return getParent(self, 2)
     },
     get document() {
-      return parseDocument(self.description ?? "", "text/html", self.link)
+      return parseDocument(self.description ?? "", "text/html", self.href)
     },
     get summary() {
-      return this.document.body.innerText.slice(0, 200)
+      return summarize(this.document)
     },
     get htmlDescription() {
       return this.document.body.innerHTML
     },
     get key() {
-      return [self.source.href, self.link]
+      return [self.source.href, self.href]
+    },
+    get oembed() {
+      const store = getParentOfType(self, Store)
+      return store.oEmbeds.cache.get(self.href)
     },
   }))
   .volatile(() => ({
@@ -39,8 +47,9 @@ export const Item = t
       self.isNew = false
     },
     makeReadable: flow(function* () {
-      const doc = yield fetchDoc(self.link)
-      const { content } = new Readability(doc).parse()
-      self.readableDescription = content
+      const doc = yield fetchDoc(self.href)
+      const result = new Readability(doc).parse()
+      if (!result) return
+      self.update({ readableDescription: result.content })
     }),
   }))

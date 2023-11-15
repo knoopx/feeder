@@ -1,6 +1,5 @@
 import React from "react"
 import { inject, observer } from "mobx-react"
-import { sumBy } from "lodash"
 import { useHotkeys } from "react-hotkeys-hook"
 
 import Source from "./Source"
@@ -14,7 +13,7 @@ export const SourceList = inject("store")(
     )
 
     return (
-      <div className="flex flex-auto flex-col overflow-y-auto">
+      <div className="flow-col overflow-y-auto">
         <Source
           source={{
             title: "All Sources",

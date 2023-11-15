@@ -1,5 +1,5 @@
-import q from "domqs"
-import React, { useEffect, useState } from "react"
+import q from "../support/q"
+import { useEffect } from "react"
 import { types, unprotect, onSnapshot } from "mobx-state-tree"
 import { observer } from "mobx-react"
 import { MdRssFeed } from "react-icons/md"

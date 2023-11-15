@@ -1,4 +1,4 @@
-import q from "domqs"
+import q from "../support/q"
 import fs from "fs"
 
 import { parseDocument } from "./parseDOM"

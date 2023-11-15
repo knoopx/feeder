@@ -8,7 +8,7 @@ import { createRoot } from "react-dom/client"
 import "./index.css"
 
 import Store from "./models/Store"
-import App from "./containers/App"
+import Shell from "./app/Shell"
 
 // By default hotkeys are not enabled for INPUT SELECT TEXTAREA elements
 hotkeys.filter = () => true
@@ -20,7 +20,7 @@ const store = Store.create(
 const root = createRoot(document.getElementById("root"))
 root.render(
   <Provider store={store}>
-    <App />
+    <Shell />
   </Provider>,
 )
 

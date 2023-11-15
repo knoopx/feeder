@@ -1,10 +1,12 @@
 import { values, autorun } from "mobx"
+import { productName } from "../../package.json"
 import { sumBy, max, map, orderBy, flatten } from "lodash"
 import { types as t, destroy } from "mobx-state-tree"
 import { parseOPML } from "../support/opml"
 
 import { Item } from "./Item"
 import { Source } from "./Source"
+import { OEmbeds } from "./OEmbeds"
 
 const disposables = []
 
@@ -15,6 +17,7 @@ export default t
     filter: t.optional(t.string, ""),
     isEditing: t.optional(t.boolean, false),
     activeSourceIndex: t.optional(t.number, -1),
+    oEmbeds: t.optional(OEmbeds, {}),
     activeItem: t.maybeNull(
       t.reference(Item, {
         onInvalidated(e) {
@@ -24,6 +27,9 @@ export default t
     ),
   })
   .views((self) => ({
+    get noEmbed() {
+      return new NoEmbed()
+    },
     get newItemsCount() {
       return sumBy(self.allSources, "newItemsCount")
     },
@@ -88,7 +94,7 @@ export default t
     afterCreate() {
       disposables.push(
         autorun(() => {
-          document.title = `Reeder (${self.newItemsCount})`
+          document.title = `${productName} (${self.newItemsCount})`
         }),
       )
 
@@ -161,11 +167,11 @@ export default t
       }
       destroy(source)
     },
-    clearItems() {
+    clearItems(reset = false) {
       if (self.activeSource) {
-        self.activeSource.clearItems()
+        self.activeSource.clearItems(reset)
       } else {
-        self.allSources.forEach((x) => x.clearItems())
+        self.allSources.forEach((x) => x.clearItems(reset))
       }
     },
     fetchSources() {

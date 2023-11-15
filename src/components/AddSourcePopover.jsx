@@ -1,9 +1,8 @@
-import q from "domqs"
-import React from "react"
-import { Popover, Spinner } from "../../components"
+import q from "../support/q"
+import { Popover, Spinner } from "."
 import { inject, observer, useLocalStore } from "mobx-react"
 import { MdError } from "react-icons/md"
-import { fetchDoc } from "../../support/fetchDoc"
+import { fetchDoc } from "../support/fetchDoc"
 
 const findFeeds = q(["link[type='application/rss+xml']@href"])
 
@@ -27,13 +26,35 @@ export const AddSourcePopover = inject("store")(
         state.isLoading = true
         state.error = false
         const doc = await fetchDoc(href)
-        console.log(doc.querySelector(":root").nodeName)
-        if (["rss", "feed"].includes(doc.querySelector(":root").nodeName)) {
+        const rootNode = doc.querySelector(":root").nodeName.toLowerCase()
+        if (rootNode == "rss") {
           store.addSource({
-            title: "Loading...",
+            title: doc.querySelector("title").textContent.trim(),
+            // link: doc.querySelector("link").textContent.trim(),
             href,
+            selectors: {
+              item: "item",
+              href: "guid[isPermaLink='true'], link",
+              author: "author",
+              description: "description",
+              publishedAt: "pubDate",
+            },
           })
           onDismiss()
+        } else if (rootNode == "feed") {
+          store.addSource({
+            title: doc.querySelector("title").textContent.trim(),
+            // link: doc.querySelector("link").textContent.trim(),
+            href,
+            selectors: {
+              item: "entry",
+              title: "title",
+              href: "link@href",
+              author: "author name",
+              description: "content",
+              publishedAt: "updated",
+            },
+          })
         } else {
           const feeds = findFeeds(doc).map((x) => new URL(x, href).toString())
           if (feeds.length > 0) {
