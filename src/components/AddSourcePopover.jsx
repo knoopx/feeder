@@ -4,7 +4,9 @@ import { inject, observer, useLocalStore } from "mobx-react"
 import { MdError } from "react-icons/md"
 import { fetchDoc } from "../support/fetchDoc"
 
-const findFeeds = q("link[type='application/rss+xml']@href")
+const findFeed = q("link[type='application/rss+xml']@href", (x) =>
+  new URL(x, href).toString(),
+)
 
 export const AddSourcePopover = inject("store")(
   observer(({ store, onDismiss, ...props }) => {
@@ -12,19 +14,21 @@ export const AddSourcePopover = inject("store")(
       value: "",
       isLoading: false,
       error: false,
-      get properValue() {
+      get httpPrefixed() {
         if (state.value.startsWith("http")) {
           return state.value
         }
-        return `http://${state.value}`
+        return `https://${state.value}`
+      },
+      update(props) {
+        Object.assign(state, props)
       },
     }))
 
     const resolve = async (href) => {
       console.log(`resolving ${href}`)
       try {
-        state.isLoading = true
-        state.error = false
+        state.update({ isLoading: true, error: false })
         const doc = await fetchDoc(href)
         const rootNode = doc.querySelector(":root").nodeName.toLowerCase()
         if (rootNode == "rss") {
@@ -56,11 +60,12 @@ export const AddSourcePopover = inject("store")(
             },
           })
         } else {
-          const feeds = findFeeds(doc).map((x) => new URL(x, href).toString())
-          if (feeds.length > 0) {
+          const feed = findFeed(doc)
+
+          if (feed) {
             store.addSource({
               title: "Loading...",
-              href: feeds[0],
+              href: feed,
             })
             onDismiss()
           } else {
@@ -74,15 +79,15 @@ export const AddSourcePopover = inject("store")(
         }
       } catch (err) {
         console.warn(err)
-        state.error = err
+        state.update({ isLoading: false, error: err })
       } finally {
-        state.isLoading = false
+        state.update({ isLoading: false })
       }
     }
 
     const onSubmit = (e) => {
       e.preventDefault()
-      resolve(state.properValue)
+      resolve(state.httpPrefixed)
     }
     return (
       <Popover

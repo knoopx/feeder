@@ -1,7 +1,7 @@
 import hotkeys from "hotkeys-js"
 import { Provider } from "mobx-react"
 import { debounce } from "lodash"
-import { onSnapshot } from "mobx-state-tree"
+import { onAction, onSnapshot } from "mobx-state-tree"
 import { createRoot } from "react-dom/client"
 
 import "./index.css"
@@ -32,3 +32,7 @@ onSnapshot(
     localStorage.store = JSON.stringify(snapshot)
   }, 1000),
 )
+
+onAction(store, ({ name, path, args }) => {
+  console.log(name, path, args)
+})

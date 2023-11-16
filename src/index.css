@@ -74,7 +74,7 @@
     @apply flow-col;
 
     .PanelHeader {
-      @apply justify-between border-pink-700 select-none flex overflow-hidden items-center px-4 bg-pink-800 text-white leading-none min-h-[48px];
+      @apply border-pink-700 select-none flex space-x-2 overflow-hidden items-center px-4 bg-pink-800 text-white leading-none min-h-[48px];
     }
 
     .PanelContent {

@@ -12,6 +12,7 @@ import { Instance } from "mobx-state-tree"
 import { ErrorBoundary } from "../components/ErrorBoundary"
 import { safeProcessor } from "../support/processor"
 import Source from "./Source"
+import { MdEdit, MdSearch } from "react-icons/md"
 
 const FieldPreview: React.FC<{
   name: string
@@ -71,6 +72,7 @@ export const SourceEditPanels = inject("store")(
     return (
       <>
         <Panel
+          icon={<MdSearch size="1.5rem"/>}
           header={<Heading>Source Preview</Heading>}
           className="flex-none w-[60ch]"
           contentClass="flow-col overflow-hidden divide-y-2"
@@ -96,6 +98,7 @@ export const SourceEditPanels = inject("store")(
           )}
         </Panel>
         <Panel
+          icon={<MdEdit size="1.5rem"/>}
           header={<Heading>Edit Source</Heading>}
           contentClass={" space-y-8 px-8 py-8"}
         >

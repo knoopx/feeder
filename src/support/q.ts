@@ -25,21 +25,18 @@ function $schema(schema: Schema) {
 export default function $(expr: string, transform?: Transform) {
   return (el: Document | Element) => {
     let { selector, propName, filters } = $expr(expr)
+    const chain = $filter([...filters, "auto"])
 
     // person
     if (isEmpty(selector) && isEmpty(propName)) return []
 
     const elements = isEmpty(selector) ? [el] : sizzle(selector, el)
-    // if (isFunction(transform)) {
-    //   if (expr.includes("@")) {
-    //     return elements.map(flow($prop(propName), $filter(filters), transform))
-    //   }
-    //   return elements.map(transform)
-    // } else
+    if (isFunction(transform)) {
+      return transform(chain(elements))
+    }
     if (!transform) {
       const vals = $prop(propName)(elements)
       // const chain = $filter(filters)
-      const chain = $filter([...filters, "auto"])
       return chain(vals)
     }
     if (isObject(transform)) {

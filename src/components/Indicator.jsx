@@ -1,9 +1,5 @@
-import React from "react"
+import { observer } from "mobx-react"
 
-export const Indicator = ({ className }) => {
-  return (
-    <div
-      className={["Indicator", className]}
-    />
-  )
-}
+export const Indicator = observer(({ className }) => {
+  return <div className={["Indicator", className]} />
+})

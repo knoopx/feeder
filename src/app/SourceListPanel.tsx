@@ -1,5 +1,6 @@
 import { PropsWithChildren, useRef } from "react"
 import { productName } from "../../package.json"
+import { GiTribalGear } from "react-icons/gi"
 import {
   MdRefresh,
   MdFileDownload,
@@ -39,28 +40,29 @@ export const SourceListPanel = inject("store")(
         state.isPopoverOpen = true
       }
 
-      const onImport = async () => {
-        const { filePaths } = await dialog.showOpenDialog({
-          filters: [
-            {
-              name: "OPML",
-              extensions: ["opml"],
-            },
-          ],
-        })
-        filePaths.forEach((path) => {
-          try {
-            store.importOPML(path)
-          } catch (err) {
-            alert(err)
-          }
-        })
-      }
+      // const onImport = async () => {
+      //   const { filePaths } = await dialog.showOpenDialog({
+      //     filters: [
+      //       {
+      //         name: "OPML",
+      //         extensions: ["opml"],
+      //       },
+      //     ],
+      //   })
+      //   filePaths.forEach((path) => {
+      //     try {
+      //       store.importOPML(path)
+      //     } catch (err) {
+      //       alert(err)
+      //     }
+      //   })
+      // }
 
       return (
         <Panel
           {...props}
           className={["relative", className]}
+          icon={<GiTribalGear size="2rem" />}
           header={
             <div className="flex flex-auto items-center justify-between">
               <Heading>{productName}</Heading>
@@ -77,9 +79,9 @@ export const SourceListPanel = inject("store")(
                     }}
                   />
                 )}
-                <HeaderButton className="px-2" onClick={onImport}>
-                  <MdFileDownload size="1.25rem" />
-                </HeaderButton>
+                {/* <HeaderButton className="px-2" onClick={onImport}> */}
+                {/* <MdFileDownload size="1.25rem" />
+                </HeaderButton> */}
 
                 <HeaderButton
                   className={[

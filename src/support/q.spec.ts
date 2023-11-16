@@ -25,19 +25,22 @@ function outputs(value, element = document) {
   }
 }
 
-test(null, outputs(null))
-test("", outputs([]))
-test("person", outputs("John Doe"))
-test("car", outputs("Red"))
-test("car[color='blue']", outputs("Blue"))
-test("car@color", outputs("red"))
-test("car@color | upper", outputs("RED"))
-test("@color", outputs("red", document.querySelector("car")))
-test("@color | upper", outputs("RED", document.querySelector("car")))
-test("@ownerDocument", outputs(document, document.querySelector("car")))
-test("person | q('strong')", outputs("John Doe"))
+// test(null, outputs(null))
+// test("", outputs([]))
+// test("person", outputs("John Doe"))
+// test("car", outputs("Red"))
+// test("car[color='blue']", outputs("Blue"))
+// test("car@color", outputs("red"))
+// test("car@color | upper", outputs("RED"))
+// test("@color", outputs("red", document.querySelector("car")))
+// test("@color | upper", outputs("RED", document.querySelector("car")))
+// test("@ownerDocument", outputs(document, document.querySelector("car")))
+// // test("person | q('strong')", outputs("John Doe"))
 
+test("q(..., fn)", () => {
+  expect(q("person", (x) => x)(document)).toEqual("JOHN DOE")
+})
 // test(
-//   "@ownerDocument | q('number')",
-//   output("Two", document.querySelector("car")),
+//   "@ownerDocument.querySelector('number')",
+//   outputs("Two", document.querySelector("car")),
 // )

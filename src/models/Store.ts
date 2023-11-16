@@ -7,6 +7,7 @@ import { parseOPML } from "../support/opml"
 import { Item } from "./Item"
 import { Source } from "./Source"
 import { OEmbeds } from "./OEmbeds"
+import { now } from "mobx-utils"
 
 const disposables = []
 
@@ -100,7 +101,17 @@ export const Store = t
 
       disposables.push(
         autorun(() => {
-          self.setActiveItem(self.filteredItems[0])
+          self.allSources.forEach((source) => {
+            if (now() - source.lastUpdateAt > source.interval * 60 * 1000) {
+              source.update({ status: "pending" })
+            }
+          })
+        }),
+      )
+
+      disposables.push(
+        autorun(() => {
+          this.setActiveItem(self.filteredItems[0])
         }),
       )
 

@@ -7,6 +7,7 @@ import { fetchDoc } from "../support/fetchDoc"
 import { summarize } from "../support/processor"
 import { parseDocument } from "../support/parseDOM"
 import sha256 from "sha256"
+import { min } from "date-fns"
 
 const disposables: (() => void)[] = []
 
@@ -38,7 +39,6 @@ export const Source = t
     image: t.maybeNull(t.string),
     description: t.maybeNull(t.string),
     baseURL: t.maybeNull(t.string),
-    clearedAt: t.maybeNull(t.Date),
     kind: t.optional(t.enumeration(["feed", "xml", "json", "html"]), "feed"),
     items: t.optional(t.map(Item), {}),
     status: t.optional(
@@ -46,8 +46,10 @@ export const Source = t
       "pending",
     ),
     readability: t.optional(t.boolean, false),
-    repunctuate: t.optional(t.boolean, false),
     selectors: t.optional(Selectors, {}),
+    clearedAt: t.maybeNull(t.Date),
+    lastUpdateAt: t.optional(t.Date, () => new Date()),
+    interval: t.optional(t.number, 15), // minutes
   })
   .volatile(() => ({
     error: null,
@@ -112,10 +114,14 @@ export const Source = t
       if (reset) {
         self.clearedAt = null
       } else if (self.lastPublishedAt) {
-        self.clearedAt = self.lastPublishedAt
+        self.clearedAt = new Date()
       }
       self.allItems.forEach((item) => {
-        destroy(item)
+        if (item.publishedAt < self.clearedAt) {
+          destroy(item)
+        } else {
+          item.update({ isNew: false })
+        }
       })
     },
     addItem({ href, publishedAt, ...rest }: Instance<typeof Item>) {
@@ -182,7 +188,7 @@ export const Source = t
         self.update({ error: err })
         console.warn(err)
       } finally {
-        self.update({ status: "done", lastUpdateAt: Date.now() })
+        self.update({ status: "done", lastUpdateAt: new Date() })
       }
     }),
   }))
