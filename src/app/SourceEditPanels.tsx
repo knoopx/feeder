@@ -15,12 +15,12 @@ import Source from "./Source"
 import { MdEdit, MdSearch } from "react-icons/md"
 
 const FieldPreview: React.FC<{
-  name: string
+  name: string | null
   activeSource: Instance<typeof Source>
 }> = ({ name, activeSource }) => {
-  const item = activeSource.lastItems[0] ?? {}
-  return <Inspector data={item[name]} />
-
+  const index = Math.floor(Math.random() * activeSource.lastItems.length)
+  const item = activeSource.lastItems[index] ?? {}
+  return <Inspector data={name ? item[name] : activeSource.lastItems} />
   // return <code className="text-xs truncate">{JSON.stringify(item[name])}</code>
 }
 
@@ -158,6 +158,7 @@ export const SourceEditPanels = inject("store")(
                       activeSource.selectors.update({ item: e.target.value })
                     }}
                   />
+                  <FieldPreview activeSource={activeSource} />
                 </Field>
                 <Field title="Link" className="space-y-1">
                   <Input
