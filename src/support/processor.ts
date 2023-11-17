@@ -33,7 +33,7 @@ export function summarize(doc?: Document) {
   return processor()
     .use(rehypeSanitize, {
       strip: ["script", "style"],
-      tagNames: ["a", "b", "i", "strong", "em"],
+      tagNames: ["a", "b", "i", "strong", "em", "br"],
     })
     .processSync(text).value
 }
