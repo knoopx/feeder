@@ -39,7 +39,7 @@ export const Source = t
     image: t.maybeNull(t.string),
     description: t.maybeNull(t.string),
     baseURL: t.maybeNull(t.string),
-    kind: t.optional(t.enumeration(["feed", "xml", "json", "html"]), "feed"),
+    kind: t.optional(t.enumeration(["xml", "json", "html"]), "xml"),
     items: t.optional(t.map(Item), {}),
     status: t.optional(
       t.enumeration(["pending", "running", "done"]),
