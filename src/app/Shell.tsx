@@ -7,7 +7,7 @@ export const Shell = inject("store")(
   observer(({ store }) => {
     return (
       <div className="PanelContainer">
-        <SourceListPanel className="flex-none w-[35ch]" />
+        <SourceListPanel className="flex-none max-w-[35ch]" />
         {store.isEditing && store.activeSource ? (
           <SourceEditPanels />
         ) : (

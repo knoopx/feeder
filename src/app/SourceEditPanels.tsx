@@ -72,9 +72,9 @@ export const SourceEditPanels = inject("store")(
     return (
       <>
         <Panel
-          icon={<MdSearch size="1.5rem"/>}
+          icon={<MdSearch size="1.5rem" />}
           header={<Heading>Source Preview</Heading>}
-          className="flex-none w-[60ch]"
+          className="flex-none min-w-[40ch] max-w-[60ch]"
           contentClass="flow-col overflow-hidden divide-y-2"
         >
           {activeSource.lastItems.length > 0 ? (
@@ -98,7 +98,7 @@ export const SourceEditPanels = inject("store")(
           )}
         </Panel>
         <Panel
-          icon={<MdEdit size="1.5rem"/>}
+          icon={<MdEdit size="1.5rem" />}
           header={<Heading>Edit Source</Heading>}
           contentClass={" space-y-8 px-8 py-8"}
         >
@@ -148,8 +148,8 @@ export const SourceEditPanels = inject("store")(
 
           <div className="space-y-2">
             <Heading>Selectors</Heading>
-            <div className="grid grid-cols-[60ch,auto] bg-muted p-4 rounded-md overflow-hidden">
-              <div className="space-y-2">
+            <div className="flow-row bg-muted p-4 rounded-md overflow-hidden">
+              <div className="space-y-2 max-w-60ch">
                 <Field title="Item">
                   <Input
                     className="font-mono text-sm"
@@ -230,7 +230,7 @@ export const SourceEditPanels = inject("store")(
                   <FieldPreview name="image" activeSource={activeSource} />
                 </Field>
               </div>
-              <div className="p-6 overflow-auto">
+              <div className="flex-auto p-6 overflow-auto">
                 <div className="bg-white rounded-md p-4">
                   {activeSource.kind === "html" ? (
                     activeSource.document && (
