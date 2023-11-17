@@ -102,8 +102,10 @@ export const Store = t
       disposables.push(
         autorun(() => {
           self.allSources.forEach((source) => {
-            if (now() - source.lastUpdateAt > source.interval * 60 * 1000) {
-              source.update({ status: "pending" })
+            if (source.status === "done") {
+              if (now() - source.lastUpdateAt > source.interval * 60 * 1000) {
+                source.update({ status: "pending" })
+              }
             }
           })
         }),
