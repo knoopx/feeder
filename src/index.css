@@ -105,7 +105,7 @@
   }
 
   .ItemListItemSummary {
-    @apply flex-none text-sm leading-tight line-clamp-2 text-muted;
+    @apply flex-none text-sm leading-tight line-clamp-3 text-muted;
   }
 
   .ItemListItemAuthor {
