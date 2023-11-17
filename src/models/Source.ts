@@ -1,8 +1,15 @@
 import q from "../support/q"
 import { Item } from "./Item"
 import { reaction, values } from "mobx"
-import { orderBy } from "lodash"
-import { types as t, flow, getParent, destroy, Instance } from "mobx-state-tree"
+import { orderBy, uniqBy } from "lodash"
+import {
+  types as t,
+  flow,
+  getParent,
+  destroy,
+  Instance,
+  getSnapshot,
+} from "mobx-state-tree"
 import { fetchDoc } from "../support/fetchDoc"
 import { summarize } from "../support/processor"
 import { parseDocument } from "../support/parseDOM"
@@ -101,7 +108,16 @@ export const Source = t
   .actions((self) => ({
     afterCreate() {
       disposables.push(
-        reaction(() => JSON.stringify(self.selectors), self.parse),
+        reaction(
+          () => getSnapshot(self),
+          () => {
+            try {
+              self.parse()
+            } catch (err) {
+              console.warn(err)
+            }
+          },
+        ),
       )
     },
     beforeDestroy() {
@@ -156,7 +172,7 @@ export const Source = t
         }
       }
 
-      self.lastItems = adapter().map((props, i) => {
+      const parsed = adapter().map((props, i) => {
         return {
           id: sha256(self.href + props.href).slice(0, 8),
           ...props,
@@ -166,6 +182,8 @@ export const Source = t
           source: self,
         }
       })
+
+      self.lastItems = orderBy(uniqBy(parsed, "href"), "publishedAt", "desc")
     },
     fetch: flow(function* (onlyFetch = false) {
       try {
