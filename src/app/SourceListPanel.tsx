@@ -1,12 +1,7 @@
 import { PropsWithChildren, useRef } from "react"
 import { productName } from "../../package.json"
 import { GiTribalGear } from "react-icons/gi"
-import {
-  MdRefresh,
-  MdFileDownload,
-  MdModeEdit,
-  MdAddCircle,
-} from "react-icons/md"
+import { MdRefresh, MdModeEdit, MdAddCircle } from "react-icons/md"
 import { Panel, HeaderButton, Spinner } from "../components"
 import { inject, observer, useLocalStore } from "mobx-react"
 
@@ -40,24 +35,6 @@ export const SourceListPanel = inject("store")(
         state.isPopoverOpen = true
       }
 
-      // const onImport = async () => {
-      //   const { filePaths } = await dialog.showOpenDialog({
-      //     filters: [
-      //       {
-      //         name: "OPML",
-      //         extensions: ["opml"],
-      //       },
-      //     ],
-      //   })
-      //   filePaths.forEach((path) => {
-      //     try {
-      //       store.importOPML(path)
-      //     } catch (err) {
-      //       alert(err)
-      //     }
-      //   })
-      // }
-
       return (
         <Panel
           {...props}
@@ -79,9 +56,6 @@ export const SourceListPanel = inject("store")(
                     }}
                   />
                 )}
-                {/* <HeaderButton className="px-2" onClick={onImport}> */}
-                {/* <MdFileDownload size="1.25rem" />
-                </HeaderButton> */}
 
                 <HeaderButton
                   className={[
