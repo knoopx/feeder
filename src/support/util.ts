@@ -62,6 +62,15 @@ export function makeContext(result: any) {
     capitalize() {
       return result[0].toLocaleUpperCase() + result.slice(1).toLocaleLowerCase()
     },
+    format(format: string) {
+      if (!isArray(result)) {
+        throw new Error("format() requires an array")
+      }
+      const values = result.map((x: any) => autoValue(x))
+      return format.replace(/{(\d+)}/g, (match, number) => {
+        return typeof values[number] === "undefined" ? match : values[number]
+      })
+    },
     split(separator: string) {
       return autoValue(result).split(separator)
     },
