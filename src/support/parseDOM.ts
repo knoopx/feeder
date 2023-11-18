@@ -1,3 +1,8 @@
+import { Selectors } from "../models/Source"
+
+import { Instance } from "mobx-state-tree"
+import { parse, autoValue } from "./parsing"
+
 const absolutizeProp = (prop: string, base: string) => (doc: Document) => {
   Array.from(doc.querySelectorAll(`[${prop}]`)).forEach((node) => {
     try {
@@ -36,4 +41,19 @@ export const parseDocument = (
     absolutize(doc, base)
   }
   return doc
+}
+export const parseDOM = (
+  doc: Document,
+  selectors: Instance<typeof Selectors>,
+) => {
+  const { item, ...itemSelectors } = selectors
+  return parse(item)(doc).map((el: Element) =>
+    Object.keys(itemSelectors).reduce(
+      (acc: { [key: string]: any }, key: string) => ({
+        ...acc,
+        [key]: autoValue(parse(itemSelectors[key])(el)),
+      }),
+      {},
+    ),
+  )
 }

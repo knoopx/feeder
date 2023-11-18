@@ -1,29 +1,40 @@
-import q from "../support/q"
 import { Item } from "./Item"
-import { reaction, values } from "mobx"
+import { values } from "mobx"
 import { orderBy, uniqBy } from "lodash"
-import {
-  types as t,
-  flow,
-  getParent,
-  destroy,
-  Instance,
-  getSnapshot,
-} from "mobx-state-tree"
+import { types as t, flow, getParent, destroy, Instance } from "mobx-state-tree"
 import { fetchDoc } from "../support/fetchDoc"
 import { summarize } from "../support/processor"
 import { parseDocument } from "../support/parseDOM"
 import sha256 from "sha256"
-import { min } from "date-fns"
+import { parse } from "../support/parsing"
+import { parseDOM } from "../support/parseDOM"
+import { h } from "../support/util"
 
 const disposables: (() => void)[] = []
 
-const parseDOM = (doc: Document, selectors: Instance<typeof Selectors>) => {
-  const { item, ...rest } = selectors
-  return q(item, rest)(doc)
+function htmlPreview(
+  preview: Document,
+  selectors: Instance<typeof Selectors>,
+  activeIndex: number,
+) {
+  parse("script")(preview).map((el: Element) => el.remove())
+
+  parse(selectors.item)(preview).map((el: Element, i: number) => {
+    el.setAttribute("style", "border: 2px solid red !important;")
+    el.setAttribute("data-i", String(i))
+  })
+
+  const fn = (index: number) => {
+    const el = document.querySelector(`[data-i="${index}"]`)
+    el?.scrollIntoView({ block: "center" })
+  }
+  preview.body.appendChild(
+    h("script", {}, `(${fn.toString()})(${activeIndex})`),
+  )
+  return preview
 }
 
-const Selectors = t
+export const Selectors = t
   .model("Selectors", {
     item: t.optional(t.string, ""),
     title: t.optional(t.string, ""),
@@ -61,25 +72,62 @@ export const Source = t
   .volatile(() => ({
     error: null,
     document: null as Document | null,
-    lastItems: [],
+    activeIndex: 0,
   }))
   .views((self) => ({
     get id() {
       return self.href
+    },
+    get activeItem() {
+      return this.lastItems[self.activeIndex]
+    },
+    get matches() {
+      return orderBy(this._matches, "publishedAt", "desc")
+    },
+    get _matches() {
+      if (!self.document) return []
+      try {
+        switch (self.kind) {
+          case "xml":
+          case "html":
+            return parseDOM(self.document, self.selectors)
+          case "json":
+            return parseJSON(self.document, self.selectors)
+          default:
+            throw new Error(`Unable to handle source of type "${self.kind}"`)
+        }
+      } catch (err) {
+        return []
+      }
+    },
+    get lastItems() {
+      const parsed = this.matches.map((props, i) => {
+        return {
+          id: sha256(self.href + props.href).slice(0, 8),
+          ...props,
+          summary: props.description
+            ? summarize(parseDocument(props.description))
+            : null,
+          source: self,
+        }
+      })
+
+      return uniqBy(parsed, "id")
     },
     get preview() {
       try {
         let preview: Document | null = null
         if (self.document !== null) {
           preview = self.document.cloneNode(true) as Document
-          // if (self.selectors.item) {
-          //   const matches = preview.querySelectorAll(self.selectors.item)
-          //   preview.documentElement.replaceChildren(...matches)
-          // }
+          if (self.selectors.item) {
+            if (self.kind === "html") {
+              htmlPreview(preview, self.selectors, self.activeIndex)
+            }
+          }
         }
         return preview
       } catch (err) {
-        console.warn(err)
+        // console.warn(err)
         return err
       }
     },
@@ -107,18 +155,17 @@ export const Source = t
   }))
   .actions((self) => ({
     afterCreate() {
-      disposables.push(
-        reaction(
-          () => getSnapshot(self),
-          () => {
-            try {
-              self.parse()
-            } catch (err) {
-              console.warn(err)
-            }
-          },
-        ),
-      )
+      // disposables.push(
+      //   reaction(
+      //     () => getSnapshot(self),
+      //     () => {
+      //       try {
+      //       } catch (err) {
+      //         console.warn(err)
+      //       }
+      //     },
+      //   ),
+      // )
     },
     beforeDestroy() {
       disposables.forEach((dispose) => dispose())
@@ -155,36 +202,6 @@ export const Source = t
       self.readability = !self.readability
     },
 
-    parse() {
-      if (!self.document) {
-        self.lastItems = []
-        return
-      }
-      function adapter() {
-        switch (self.kind) {
-          case "xml":
-          case "html":
-            return parseDOM(self.document, self.selectors)
-          case "json":
-            return parseJSON(self.document, self.selectors)
-          default:
-            throw new Error(`Unable to handle source of type "${self.kind}"`)
-        }
-      }
-
-      const parsed = adapter().map((props, i) => {
-        return {
-          id: sha256(self.href + props.href).slice(0, 8),
-          ...props,
-          summary: props.description
-            ? summarize(parseDocument(props.description))
-            : null,
-          source: self,
-        }
-      })
-
-      self.lastItems = orderBy(uniqBy(parsed, "href"), "publishedAt", "desc")
-    },
     fetch: flow(function* (onlyFetch = false) {
       try {
         self.error = null
@@ -192,7 +209,6 @@ export const Source = t
 
         console.log("fetching", self.href)
         self.document = yield fetchDoc(self.href)
-        self.parse()
         if (onlyFetch) return
 
         for (const item of self.lastItems) {

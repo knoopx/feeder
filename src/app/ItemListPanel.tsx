@@ -3,10 +3,11 @@ import { MdClearAll } from "react-icons/md"
 import { inject, observer } from "mobx-react"
 import { Panel, HeaderButton } from "../components"
 import { useHotkeys } from "react-hotkeys-hook"
-import { ItemList } from "./ItemList"
+import { ItemList } from "../components/ItemList"
 import { Instance } from "mobx-state-tree"
 import Store from "../models/Store"
 import { EmptyPlaceholder } from "../components/EmptyPlaceholder"
+import { Item } from "../models/Item"
 
 export const ItemListPanel = inject("store")(
   observer(
@@ -54,6 +55,10 @@ export const ItemListPanel = inject("store")(
           {store.filteredItems.length > 0 ? (
             <ItemList
               items={store.filteredItems}
+              activeItem={store.activeItem}
+              onSelect={(item: Instance<typeof Item>) =>
+                void store.setActiveItem(item)
+              }
               extended={!store.activeSource}
             />
           ) : (

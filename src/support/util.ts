@@ -1,31 +1,38 @@
-import q from "../support/q"
 import moment from "moment"
 import { parseDocument } from "./parseDOM"
 
 import * as dateFns from "date-fns"
 import _parseHumanRelative from "parse-human-relative-time/date-fns"
 import { isArray, isString, isEmpty, isFunction } from "lodash"
+import { parse } from "./parsing"
 
 const parseHumanRelative = _parseHumanRelative(dateFns)
 
-const nullify = (x: any) => (isEmpty(x) ? null : x)
+const nullify = (x: any) => {
+  if (isArray(x) && x.length === 0) {
+    return null
+  }
+
+  if (isString(x) && isEmpty(x)) {
+    return null
+  }
+
+  return x
+}
 
 const autoValue = (
   input: Element | string | Element[] | string[],
 ): string | null => {
   if (isArray(input)) {
-    return nullify(autoValue(input[0]))
+    return autoValue(input[0])
   }
 
-  if (isString(input)) {
-    return nullify(input.trim())
-  }
   if (input instanceof Document) {
     return input.documentElement.innerHTML
   }
 
   if (input instanceof Element) {
-    return nullify(input.textContent?.trim())
+    return input.textContent
   }
 
   return input
@@ -46,7 +53,7 @@ export function evalInScope(js: string, contextAsScope: object) {
     }
     return result
   } catch (e) {
-    return e.message
+    return e
   }
 }
 
@@ -97,12 +104,16 @@ export function makeContext(result: any) {
     },
     date(format: string) {
       const value = autoValue(result)
-      if (!format) return new Date(value)
+      if (!value) return null
+      if (!format) {
+        const date = new Date(value)
+        if (isNaN(date.getTime())) return null
+      }
       if (format === "iso") return Date.parse(value)
       return moment(value, format).toDate()
     },
     relativeDate() {
-      return parseHumanRelative(result, new Date())
+      return parseHumanRelative(autoValue(result), new Date())
     },
     first() {
       if (Array.isArray(result)) {
@@ -119,8 +130,21 @@ export function makeContext(result: any) {
     q(selector: string) {
       const value = autoValue(result)
       const doc = parseDocument(value ?? "", "text/html")
-      const results = q(selector)(doc)
-      return results
+      return parse(selector)(doc)
     },
   }
+}
+export function randomChoice(array: any[]) {
+  const index = Math.floor(Math.random() * array.length)
+  return array[index]
+}
+export const h = (
+  tag: string,
+  props: { [key: string]: any },
+  ...children: any[]
+) => {
+  const el = document.createElement(tag)
+  Object.assign(el, props)
+  el.append(...children)
+  return el
 }

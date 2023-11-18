@@ -1,9 +1,9 @@
-import q from "../support/q"
 import { useEffect } from "react"
 import { types, unprotect, onSnapshot } from "mobx-state-tree"
 import { observer } from "mobx-react"
 import { MdRssFeed } from "react-icons/md"
 import { fetchDoc } from "../support/fetchDoc"
+import { parse } from "../support/parsing"
 
 const Store = types.map(types.string)
 const cache = Store.create(JSON.parse(localStorage.faviconCache || "{}"))
@@ -22,7 +22,7 @@ const tryFetchImage = async (url) => {
   }
 }
 
-const match = q("link[rel*='icon']@href")
+const match = parse("link[rel*='icon']@href")
 
 const resolveIcons = async (src: string) => {
   cache.set(src, "")
@@ -43,7 +43,7 @@ const resolveIcons = async (src: string) => {
       }
     }
   } catch (err) {
-    console.warn(err)
+    // console.warn(err)
   }
 }
 

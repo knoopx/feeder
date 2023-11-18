@@ -1,6 +1,6 @@
 import { useRef, useEffect, HTMLAttributes } from "react"
 import { observer } from "mobx-react"
-import { Indicator, FavIcon, TimeAgo } from "../components"
+import { Indicator, FavIcon, TimeAgo } from "."
 import { MdPerson } from "react-icons/md"
 import { Item } from "../models/Item"
 import { Instance } from "mobx-state-tree"

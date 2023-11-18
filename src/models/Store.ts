@@ -1,8 +1,7 @@
 import { values, autorun } from "mobx"
 import { productName } from "../../package.json"
 import { sumBy, max, map, orderBy, flatten } from "lodash"
-import { types as t, destroy } from "mobx-state-tree"
-import { parseOPML } from "../support/opml"
+import { types as t, destroy, Instance } from "mobx-state-tree"
 
 import { Item } from "./Item"
 import { Source } from "./Source"
@@ -101,6 +100,7 @@ export const Store = t
 
       disposables.push(
         autorun(() => {
+          if (self.isEditing) return
           self.allSources.forEach((source) => {
             if (source.status === "done") {
               if (now() - source.lastUpdateAt > source.interval * 60 * 1000) {
@@ -152,14 +152,6 @@ export const Store = t
     setActiveItem(value) {
       self.activeItem = value
     },
-    advanceItem(direction) {
-      const nextIndex = self.activeItemIndex + direction
-      if (self.filteredItems[nextIndex]) {
-        self.setActiveItem(self.filteredItems[nextIndex])
-        return true
-      }
-      return false
-    },
     advanceSource(direction) {
       const nextIndex = self.activeSourceIndex + direction
       if (nextIndex >= -1 && nextIndex < self.sortedSources.length - 1) {
@@ -171,8 +163,12 @@ export const Store = t
     setFilter(value) {
       self.filter = value
     },
+    update(props: Partial<Instance<typeof self>>) {
+      Object.assign(self, props)
+    },
     addSource(source) {
       self.sources.put(source)
+      this.setActiveSource(source)
     },
     removeSource(source) {
       if (self.activeSource === source) {
@@ -190,17 +186,6 @@ export const Store = t
     fetchSources() {
       self.sortedSources.forEach((source) => {
         source.update({ status: "pending" })
-      })
-    },
-    importOPML(path) {
-      const sources = parseOPML(path)
-
-      sources.forEach((source) => {
-        try {
-          self.addSource(source)
-        } catch (err) {
-          console.warn(err)
-        }
       })
     },
   }))

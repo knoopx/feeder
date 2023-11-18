@@ -1,8 +1,6 @@
-import React from "react"
 import { inject, observer } from "mobx-react"
 import { useHotkeys } from "react-hotkeys-hook"
-
-import Source from "./Source"
+import { Source } from "./Source"
 
 export const SourceList = inject("store")(
   observer(({ store, editMode }) => {
