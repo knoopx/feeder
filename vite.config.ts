@@ -1,14 +1,14 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
 import peggy from "peggy"
+import unoCSS from 'unocss/vite'
 
 const vitePeggy = (options = {}) => {
-  const exts = [".pegjs", ".peggy"]
   return {
     name: "vite-peggy",
     enforce: "pre",
     transform(input, id) {
-      if (!exts.some((ext) => id.toLowerCase().endsWith(ext))) return null
+      if (!id.toLowerCase().endsWith(".peggy")) return null
 
       try {
         const code = peggy.generate(input, {
@@ -39,15 +39,12 @@ const vitePeggy = (options = {}) => {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    unoCSS(),
     vitePeggy({
       // trace: true,
       cache: true,
     }),
-    react({
-      babel: {
-        plugins: ["@knoopx/babel-plugin-jsx-classnames"],
-      },
-    }),
+    react(),
   ],
   test: {
     globals: true,

@@ -21,17 +21,8 @@ export const Item = t
     get source() {
       return getParent(self, 2)
     },
-    get document() {
-      return parseDocument(self.description ?? "", "text/html", self.href)
-    },
     get summary() {
-      return summarize(this.document)
-    },
-    get htmlDescription() {
-      return this.document.body.innerHTML
-    },
-    get key() {
-      return [self.source.href, self.href]
+      return summarize(parseDocument(self.description))
     },
     get oembed() {
       const store = getParentOfType(self, Store)

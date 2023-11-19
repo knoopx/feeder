@@ -66,7 +66,7 @@ fexpr = f:(space* "|" space* filter)* { return $filter(f.map(x => x[3])) }
 farg = string / number { return text() }
 filter = name ("(" ((farg) (comma space* farg)*)? ")")? { return text() }
 attr = "[" name (("=" / "*=" / "^=") string)? "]" { return text() }
-name = c:[a-z]i chars:[a-z0-9_\\\-]i* { return text() }
+name = [a-z]i [a-z0-9_\\\-]i* { return text() }
 
 number = [0-9]
 comma = ","

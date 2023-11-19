@@ -19,7 +19,7 @@ export const SourceEditPanels = inject("store")(
           className="flex-none w-[100ch]"
           activeSource={activeSource}
         />
-        <SourceEditPanel activeSource={activeSource} />
+        <SourceEditPanel className="flex-grow" source={activeSource} />
       </>
     )
   }),

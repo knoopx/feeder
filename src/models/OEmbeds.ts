@@ -8,9 +8,13 @@ const Provider = t.model("Provider", {
 export const OEmbeds = t
   .model("OEmbeds", {
     endpoint: t.optional(t.string, "https://noembed.com"),
-    providers: t.array(Provider),
-    cache: t.optional(t.map(t.frozen()), {}),
+    // providers: t.array(Provider),
+    // cache: t.optional(t.map(t.frozen()), {}),
   })
+  .volatile((self) => ({
+    providers: [],
+    cache: new Map(),
+  }))
   .views((self) => ({
     isSupported(url: string) {
       return self.providers.some((provider) => {

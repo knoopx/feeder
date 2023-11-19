@@ -4,6 +4,7 @@ import { observer } from "mobx-react"
 import { MdRssFeed } from "react-icons/md"
 import { fetchDoc } from "../support/fetchDoc"
 import { parse } from "../support/parsing"
+import clsx from "clsx"
 
 const Store = types.map(types.string)
 const cache = Store.create(JSON.parse(localStorage.faviconCache || "{}"))
@@ -62,8 +63,8 @@ export const FavIcon = observer(({ src, className, ...props }) => {
   }, [src, iconSrc])
 
   if (!iconSrc) {
-    return <MdRssFeed className={["h-4 w-4", className]} {...props} />
+    return <MdRssFeed className={clsx("h-4 w-4", className)} {...props} />
   }
 
-  return <img {...props} className={["h-4 w-4", className]} src={iconSrc} />
+  return <img {...props} className={clsx("h-4 w-4", className)} src={iconSrc} />
 })

@@ -1,14 +1,13 @@
 import { Item } from "./Item"
 import { values } from "mobx"
 import { orderBy, uniqBy } from "lodash"
-import { types as t, flow, getParent, destroy, Instance } from "mobx-state-tree"
+import { types as t, getParent, destroy, Instance } from "mobx-state-tree"
 import { fetchDoc } from "../support/fetchDoc"
 import { summarize } from "../support/processor"
 import { parseDocument } from "../support/parseDOM"
-import sha256 from "sha256"
 import { parse } from "../support/parsing"
 import { parseDOM } from "../support/parseDOM"
-import { h } from "../support/util"
+import { digest, h } from "../support/util"
 
 const disposables: (() => void)[] = []
 
@@ -52,8 +51,9 @@ export const Selectors = t
 
 export const Source = t
   .model("Source", {
+    id: t.identifier,
     title: t.string,
-    href: t.identifier,
+    hrefs: t.array(t.string),
     image: t.maybeNull(t.string),
     description: t.maybeNull(t.string),
     baseURL: t.maybeNull(t.string),
@@ -68,31 +68,21 @@ export const Source = t
     clearedAt: t.maybeNull(t.Date),
     lastUpdateAt: t.optional(t.Date, () => new Date()),
     interval: t.optional(t.number, 15), // minutes
+    activeItemId: t.maybeNull(t.string),
   })
   .volatile(() => ({
-    error: null,
-    document: null as Document | null,
-    activeIndex: 0,
+    error: null as Error | null,
+    documents: [] as Document[],
   }))
   .views((self) => ({
-    get id() {
-      return self.href
-    },
-    get activeItem() {
-      return this.lastItems[self.activeIndex]
-    },
-    get matches() {
-      return orderBy(this._matches, "publishedAt", "desc")
-    },
-    get _matches() {
-      if (!self.document) return []
+    match(document: Document) {
       try {
         switch (self.kind) {
           case "xml":
           case "html":
-            return parseDOM(self.document, self.selectors)
+            return parseDOM(document, self.selectors)
           case "json":
-            return parseJSON(self.document, self.selectors)
+            return parseJSON(document, self.selectors)
           default:
             throw new Error(`Unable to handle source of type "${self.kind}"`)
         }
@@ -100,11 +90,36 @@ export const Source = t
         return []
       }
     },
-    get lastItems() {
-      const parsed = this.matches.map((props, i) => {
+    get activeIndex(): number {
+      return this.lastItems.indexOf(self.activeItem)
+    },
+    get activeItem(): Instance<typeof Item> | null {
+      return this.lastItems.find(({ id }) => id === self.activeItemId)
+    },
+    get activeElement(): Element | null {
+      if (!this.activeItem?.document) return null
+
+      return parse(self.selectors.item)(this.activeItem.document)[
+        this.activeIndex
+      ]
+    },
+    get matches(): Instance<typeof Selectors>[] {
+      const matches = self.documents
+        .flatMap((d: Document) =>
+          this.match(d).map((m) => ({
+            ...m,
+            document: d,
+          })),
+        )
+        .filter((m) => m.href)
+
+      return orderBy(matches, "publishedAt", "desc")
+    },
+    get lastItems(): Instance<typeof Item>[] {
+      const parsed = this.matches.map((props: Instance<typeof Selectors>) => {
         return {
-          id: sha256(self.href + props.href).slice(0, 8),
           ...props,
+          id: digest(props.href),
           summary: props.description
             ? summarize(parseDocument(props.description))
             : null,
@@ -117,11 +132,13 @@ export const Source = t
     get preview() {
       try {
         let preview: Document | null = null
-        if (self.document !== null) {
-          preview = self.document.cloneNode(true) as Document
+        if (this.activeItem?.document !== null) {
+          preview = this.activeItem?.document.cloneNode(true) as Document
           if (self.selectors.item) {
             if (self.kind === "html") {
-              htmlPreview(preview, self.selectors, self.activeIndex)
+              htmlPreview(preview, self.selectors, this.activeIndex)
+            } else {
+              // TODO: implement
             }
           }
         }
@@ -154,19 +171,7 @@ export const Source = t
     },
   }))
   .actions((self) => ({
-    afterCreate() {
-      // disposables.push(
-      //   reaction(
-      //     () => getSnapshot(self),
-      //     () => {
-      //       try {
-      //       } catch (err) {
-      //         console.warn(err)
-      //       }
-      //     },
-      //   ),
-      // )
-    },
+    afterCreate() {},
     beforeDestroy() {
       disposables.forEach((dispose) => dispose())
     },
@@ -202,27 +207,28 @@ export const Source = t
       self.readability = !self.readability
     },
 
-    fetch: flow(function* (onlyFetch = false) {
-      try {
-        self.error = null
-        self.update({ status: "running" })
-
-        console.log("fetching", self.href)
-        self.document = yield fetchDoc(self.href)
-        if (onlyFetch) return
-
-        for (const item of self.lastItems) {
-          try {
-            self.addItem(item)
-          } catch (err) {
-            console.warn(err)
-          }
+    async fetch(onlyFetch = false) {
+      const documents = await Promise.all(self.hrefs.map(this.fetchUrl))
+      this.update({ documents })
+      if (onlyFetch) return
+      for (const item of self.lastItems) {
+        try {
+          this.addItem(item)
+        } catch (err) {
+          console.warn(err)
         }
-      } catch (err) {
-        self.update({ error: err })
-        console.warn(err)
-      } finally {
-        self.update({ status: "done", lastUpdateAt: new Date() })
       }
-    }),
+    },
+    async fetchUrl(href: string) {
+      try {
+        this.update({ error: null, status: "running" })
+        console.info("fetching", href)
+        return fetchDoc(href)
+      } catch (error) {
+        this.update({ error: error as Error })
+        console.warn(error)
+      } finally {
+        this.update({ status: "done", lastUpdateAt: new Date() })
+      }
+    },
   }))

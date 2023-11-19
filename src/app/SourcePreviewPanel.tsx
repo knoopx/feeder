@@ -9,8 +9,9 @@ import { MdSearch } from "react-icons/md"
 import { observer } from "mobx-react"
 import { PropsWithChildren } from "react"
 import { Item } from "../models/Item"
+import { ErrorBoundary } from "../components/ErrorBoundary"
 
-const DocumentIFrame: React.FC<{
+const HTMLPreview: React.FC<{
   activeSource: Instance<typeof Source>
 }> = observer(({ document }) => {
   if (!document) return null
@@ -36,7 +37,7 @@ const EditSourceItemList: React.FC<{
     activeItem={source.activeItem}
     onSelect={(item: Instance<typeof Item>) =>
       void source.update({
-        activeIndex: source.lastItems.indexOf(item),
+        activeItemId: item.id,
       })
     }
   />
@@ -46,21 +47,24 @@ export const SourcePreviewPanel: React.FC<{
   activeSource: Instance<typeof Source> & PropsWithChildren<Panel>
 }> = observer(({ activeSource, ...props }) => (
   <Panel
+    id="source-preview-panel"
     {...props}
     icon={<MdSearch size="1.5rem" />}
     header={<Heading>Source Preview</Heading>}
-    contentClass="flex-none flow-col overflow-hidden divide-y"
+    contentClass="overflow-hidden divide-y"
   >
     <div className="flex-auto overflow-y-auto min-h-[50%]">
       {activeSource.kind === "html" ? (
-        <DocumentIFrame key="preview" document={activeSource.preview} />
+        <HTMLPreview key="preview" document={activeSource.preview} />
       ) : (
         <Inspector data={activeSource.preview} expandLevel={3} />
       )}
     </div>
 
     {activeSource.lastItems.length > 0 ? (
-      <EditSourceItemList source={activeSource} />
+      <ErrorBoundary>
+        <EditSourceItemList source={activeSource} />
+      </ErrorBoundary>
     ) : (
       <EmptyPlaceholder />
     )}

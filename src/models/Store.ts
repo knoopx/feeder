@@ -1,6 +1,6 @@
 import { values, autorun } from "mobx"
 import { productName } from "../../package.json"
-import { sumBy, max, map, orderBy, flatten } from "lodash"
+import { sumBy, max, map, orderBy, filter, flatten } from "lodash"
 import { types as t, destroy, Instance } from "mobx-state-tree"
 
 import { Item } from "./Item"
@@ -8,7 +8,7 @@ import { Source } from "./Source"
 import { OEmbeds } from "./OEmbeds"
 import { now } from "mobx-utils"
 
-const disposables = []
+const disposables: (() => void)[] = []
 
 export const Store = t
   .model("Store", {
@@ -16,38 +16,29 @@ export const Store = t
     concurrency: t.optional(t.number, 4),
     filter: t.optional(t.string, ""),
     isEditing: t.optional(t.boolean, false),
-    activeSourceIndex: t.optional(t.number, -1),
     oEmbeds: t.optional(OEmbeds, {}),
-    activeItem: t.maybeNull(
-      t.reference(Item, {
-        onInvalidated(e) {
-          e.removeRef()
-        },
-      }),
-    ),
+    activeSource: t.maybeNull(t.safeReference(Source)),
+    _activeItem: t.maybeNull(t.safeReference(Item)),
   })
   .views((self) => ({
-    get noEmbed() {
-      return new NoEmbed()
-    },
     get newItemsCount() {
-      return sumBy(self.allSources, "newItemsCount")
+      return sumBy(this.allSources, "newItemsCount")
     },
     get updatedAt() {
-      return max(map(self.allSources, "updatedAt"))
+      return max(map(this.allSources, "updatedAt"))
     },
     get pending() {
-      return self.allSources.filter((source) => source.status === "pending")
+      return filter(this.allSources, { status: "pending" })
     },
     get running() {
-      return self.allSources.filter((source) => source.status === "running")
+      return filter(this.allSources, { status: "running" })
     },
     get done() {
-      return values(self.sources).filter((source) => source.status === "done")
+      return filter(this.allSources, { status: "done" })
     },
     get progress() {
       return (
-        (self.allSources.length - self.pending.length) / self.allSources.length
+        (this.allSources.length - this.pending.length) / this.allSources.length
       )
     },
     get allSources() {
@@ -55,14 +46,14 @@ export const Store = t
     },
     get allSourceItems() {
       return orderBy(
-        flatten(map(self.allSources, "allItems")),
+        flatten(map(this.allSources, "allItems")),
         "publishedAt",
         "desc",
       )
     },
     get sortedSources() {
       return orderBy(
-        self.allSources,
+        this.allSources,
         ["updatedAt", "newItemsCount", "title"],
         ["desc", "desc", "asc"],
       )
@@ -72,22 +63,19 @@ export const Store = t
         return self.activeSource.sortedItems
       }
 
-      return self.allSourceItems
+      return this.allSourceItems
     },
     get filteredItems() {
       const regex = new RegExp(self.filter, "i")
-      return self.sortedItems.filter((item) => {
+      return this.sortedItems.filter((item) => {
         if (self.filter.length > 0) {
           return Object.values(item).some((x) => regex.test(x))
         }
         return true
       })
     },
-    get activeSource() {
-      return self.sortedSources[self.activeSourceIndex]
-    },
-    get activeItemIndex() {
-      return self.filteredItems.indexOf(self.activeItem)
+    get activeItem() {
+      return self.activeSource?.activeItem ?? self._activeItem
     },
   }))
   .actions((self) => ({
@@ -113,7 +101,9 @@ export const Store = t
 
       disposables.push(
         autorun(() => {
-          this.setActiveItem(self.filteredItems[0])
+          if (self.activeSource && self.activeItem === null) {
+            this.setActiveItem(self.filteredItems[0])
+          }
         }),
       )
 
@@ -146,33 +136,33 @@ export const Store = t
     toggleEdit() {
       self.isEditing = !self.isEditing
     },
-    setActiveSource(source) {
-      self.activeSourceIndex = self.sortedSources.indexOf(source)
+    setActiveSource(source: Instance<typeof Source> | null) {
+      self._activeItem = null
+      self.activeSource = source
     },
-    setActiveItem(value) {
-      self.activeItem = value
+    setActiveItem(item: Instance<typeof Item> | null) {
+      self._activeItem = item
+      item?.source.update({ activeItem: item })
     },
-    advanceSource(direction) {
-      const nextIndex = self.activeSourceIndex + direction
+    advanceSource(direction: number) {
+      const nextIndex =
+        self.sortedSources.indexOf(self.activeSource) + direction
       if (nextIndex >= -1 && nextIndex < self.sortedSources.length - 1) {
-        self.setActiveSource(self.sortedSources[nextIndex])
+        this.setActiveSource(self.sortedSources[nextIndex])
         return true
       }
       return false
     },
-    setFilter(value) {
-      self.filter = value
-    },
     update(props: Partial<Instance<typeof self>>) {
       Object.assign(self, props)
     },
-    addSource(source) {
+    addSource(source: Instance<typeof Source>) {
       self.sources.put(source)
       this.setActiveSource(source)
     },
-    removeSource(source) {
+    removeSource(source: Instance<typeof Source>) {
       if (self.activeSource === source) {
-        self.setActiveSource(null)
+        this.setActiveSource(null)
       }
       destroy(source)
     },
@@ -180,7 +170,7 @@ export const Store = t
       if (self.activeSource) {
         self.activeSource.clearItems(reset)
       } else {
-        self.allSources.forEach((x) => x.clearItems(reset))
+        self.allSources.forEach((x) => void x.clearItems(reset))
       }
     },
     fetchSources() {

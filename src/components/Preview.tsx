@@ -2,8 +2,14 @@ import { Spinner } from "."
 import { inject, observer } from "mobx-react"
 import { useEffect } from "react"
 import { safeProcessor } from "../support/processor"
+import { Instance } from "mobx-state-tree"
+import { Store } from "../models/Store"
 
-export const Preview = inject("store")(
+export const Preview: React.FC<{
+  item: any
+  className?: string
+  store?: Instance<typeof Store>
+}> = inject("store")(
   observer(({ store, item, className }) => {
     useEffect(() => {
       if (store.oEmbeds.isSupported(item.href)) {
@@ -11,17 +17,13 @@ export const Preview = inject("store")(
       }
     }, [item.href])
 
-    let html = item.htmlDescription
-
-    if (item.oembed) {
-      html = item.oembed.html
-    }
+    let html = item.oembed ? item.oembed.html : item.htmlDescription
 
     if (item.source.readability) {
       if (!item.readableDescription) {
         return (
           <div className="relative" style={{ paddingBottom: "100%" }}>
-            <div className="flex flex-auto absolute items-center justify-center h-full w-full">
+            <div className="flow-row absolute flow-center h-full w-full">
               <Spinner size={48} />
             </div>
           </div>
@@ -33,7 +35,7 @@ export const Preview = inject("store")(
 
     return (
       <div
-        className={["Preview", className]}
+        className={className}
         dangerouslySetInnerHTML={{
           __html: safeProcessor.processSync(html).value,
         }}

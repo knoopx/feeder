@@ -1,6 +1,6 @@
 import { Window } from "happy-dom"
+import { parse, $auto } from "./parsing"
 
-import { parse, autoValue } from "./parsing"
 function html(text: string) {
   const window = new Window()
   window.document.body.innerHTML = text
@@ -21,7 +21,7 @@ const document = html(`
 function outputs(value, context = document) {
   return ({ task }) => {
     const select = parse(task.name)
-    expect(autoValue(select(context))).toEqual(value)
+    expect($auto(select(context))).toEqual(value)
   }
 }
 
@@ -36,7 +36,6 @@ test("a.tweet-link", outputs(undefined))
 test("a.tweet-link@href", outputs(undefined))
 test(".dash-ed", outputs(undefined))
 test(`.dash\\\:eed`, outputs(undefined))
-
 
 test("person", outputs("John Doe"))
 test("[color]", outputs("Red"))

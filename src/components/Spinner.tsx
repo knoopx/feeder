@@ -1,6 +1,9 @@
-import React from "react"
+import React, { CSSProperties } from "react"
 
-export const Spinner = ({ size, color, ...props }) => (
+export const Spinner: React.FC<{
+  size?: CSSProperties["width"]
+  color?: string
+}> = ({ size, color, ...props }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" {...props}>
     <g transform="translate(10 10)">
       <circle

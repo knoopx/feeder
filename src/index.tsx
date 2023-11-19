@@ -1,19 +1,18 @@
-import hotkeys from "hotkeys-js"
+import "uno.css"
+import "./global.css"
+
+import { StrictMode } from "react"
 import { Provider } from "mobx-react"
 import { debounce } from "lodash"
 import { onAction, onSnapshot } from "mobx-state-tree"
 import { createRoot } from "react-dom/client"
 
-import "./index.css"
-
 import { Store } from "./models/Store"
 import { Shell } from "./app/Shell"
 
-import moment from "moment"
+import hotkeys from "hotkeys-js"
 
-globalThis.moment = moment
-// By default hotkeys are not enabled for INPUT SELECT TEXTAREA elements
-hotkeys.filter = () => true
+hotkeys.filter = () => true // By default hotkeys are not enabled for INPUT SELECT TEXTAREA elements
 
 const store = Store.create(
   localStorage.store ? JSON.parse(localStorage.store) : {},
@@ -21,9 +20,11 @@ const store = Store.create(
 
 const root = createRoot(document.getElementById("root"))
 root.render(
-  <Provider store={store}>
-    <Shell />
-  </Provider>,
+  <StrictMode>
+    <Provider store={store}>
+      <Shell />
+    </Provider>
+  </StrictMode>,
 )
 
 onSnapshot(

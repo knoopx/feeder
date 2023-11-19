@@ -1,18 +1,11 @@
-import { Inspector } from "react-inspector";
+import { Inspector } from "react-inspector"
 
-const props = [
-  "href",
-  "title",
-  "description",
-  "author",
-  "publishedAt",
-  "image",
-]
+const props = ["href", "title", "description", "author", "publishedAt", "image"]
 
 const InspectorTable: React.FC<{
-  activeSource: unknown;
-  props: string[];
-}> = ({ activeSource, props }) => (
+  source: unknown
+  props: string[]
+}> = ({ source: activeSource, props }) => (
   <table>
     <thead>
       <tr>
@@ -35,4 +28,4 @@ const InspectorTable: React.FC<{
       ))}
     </tbody>
   </table>
-);
+)

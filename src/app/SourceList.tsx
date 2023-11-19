@@ -11,7 +11,7 @@ export const SourceList = inject("store")(
     )
 
     return (
-      <div className="flow-col overflow-y-auto">
+      <div className=":uno-source-list: flow-col overflow-y-auto">
         <Source
           source={{
             title: "All Sources",
@@ -23,7 +23,7 @@ export const SourceList = inject("store")(
         />
         {store.sortedSources.map((source) => (
           <Source
-            key={source.href}
+            key={source.id}
             source={source}
             editMode={editMode}
             isActive={store.activeSource === source}

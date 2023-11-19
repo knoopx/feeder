@@ -6,7 +6,7 @@ export const SourceItemsPanels = observer(() => (
   <>
     <ItemListPanel
       className="flex-none w-[60ch]"
-      contentClass="flow-col flex-none overflow-y-auto"
+      contentClass="overflow-y-auto"
     />
     <ItemPanel className="flow-col w-auto" />
   </>

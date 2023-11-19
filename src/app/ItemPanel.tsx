@@ -5,6 +5,7 @@ import { MdOpenInBrowser, MdPerson, MdWeekend } from "react-icons/md"
 import { Instance } from "mobx-state-tree"
 import { EmptyPlaceholder } from "../components/EmptyPlaceholder"
 import { Store } from "../models/Store"
+import clsx from "clsx"
 
 export const ItemPanel = inject("store")(
   observer(
@@ -21,18 +22,15 @@ export const ItemPanel = inject("store")(
       return (
         <Panel
           {...props}
-          // panelClassName="flex-auto"
+          panelClassName="flex-auto"
           header={
             item && (
-              <div className="flex flex-auto justify-between">
+              <div className="flow-row justify-between">
                 <HeaderButton
                   onClick={() => item.source.toggleReadability()}
-                  className={[
-                    "px-2",
-                    {
-                      "text-white": item.source.readability,
-                    },
-                  ]}
+                  className={clsx("px-2", {
+                    "text-white": item.source.readability,
+                  })}
                 >
                   <MdWeekend size="1.25rem" />
                 </HeaderButton>
@@ -47,13 +45,10 @@ export const ItemPanel = inject("store")(
           {item ? (
             <div className="flex-auto overflow-y-auto">
               <div className="px-8 py-4 border-b">
-                <div className="flex justify-between mb-2 text-muted">
-                  <div className="flow-row items-center">
+                <div className="flow-row justify-between mb-2 text-muted">
+                  <div className="flex flex-grow items-center">
                     <div className="flex items-center">
-                      <FavIcon
-                        className="mr-2"
-                        src={item.source.baseURL || item.source.href}
-                      />{" "}
+                      <FavIcon className="mr-2" src={item.source.baseURL} />{" "}
                       {item.source.title}
                     </div>
                     {item.author && (
@@ -63,7 +58,7 @@ export const ItemPanel = inject("store")(
                     )}
                   </div>
                   <TimeAgo
-                    className="flex flow-col text-right text-sm"
+                    className="flow-col text-right text-sm"
                     since={item.publishedAt}
                   />
                 </div>

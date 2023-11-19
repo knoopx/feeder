@@ -22,7 +22,7 @@ export const ItemListPanel = inject("store")(
       })
 
       useHotkeys("escape", () => {
-        store.setFilter("")
+        store.update({ filter: "" })
         inputRef.current?.blur()
       })
 
@@ -33,11 +33,11 @@ export const ItemListPanel = inject("store")(
             <>
               <input
                 ref={inputRef}
-                className="Input"
+                className="flex-auto placeholder-text-pink-300 placeholder-italic bg-transparent border-none outline-none"
                 placeholder="Filter..."
                 value={store.filter}
                 onChange={(e) => {
-                  store.setFilter(e.target.value)
+                  store.update({ filter: e.target.value })
                 }}
               />
               <div className="flex items-center">

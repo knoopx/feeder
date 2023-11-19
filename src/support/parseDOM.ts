@@ -1,7 +1,6 @@
 import { Selectors } from "../models/Source"
-
 import { Instance } from "mobx-state-tree"
-import { parse, autoValue } from "./parsing"
+import { parse, $auto } from "./parsing"
 
 const absolutizeProp = (prop: string, base: string) => (doc: Document) => {
   Array.from(doc.querySelectorAll(`[${prop}]`)).forEach((node) => {
@@ -51,7 +50,7 @@ export const parseDOM = (
     Object.keys(itemSelectors).reduce(
       (acc: { [key: string]: any }, key: string) => ({
         ...acc,
-        [key]: autoValue(parse(itemSelectors[key])(el)),
+        [key]: $auto(parse(itemSelectors[key])(el)),
       }),
       {},
     ),

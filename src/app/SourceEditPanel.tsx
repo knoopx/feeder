@@ -8,69 +8,91 @@ import { Instance } from "mobx-state-tree"
 import { Inspector } from "react-inspector"
 import { Source } from "./Source"
 import { observer } from "mobx-react"
-import { PropsWithChildren } from "react"
-import { autoValue, parse } from "../support/parsing"
+import { $auto, parse } from "../support/parsing"
+import { ErrorMessage } from "../components/ErrorMessage"
+import { AutoTextArea } from "../components/AutoTextArea"
 
 function deepInspect(results) {
   if (!Array.isArray(results)) results = [results]
   return results.map((x, i) => {
     if (x instanceof Error) {
-      return <pre className="text-red-500 text-sm italic">{x.message}</pre>
+      return <ErrorMessage key={i} error={x} />
     }
     return <Inspector key={i} data={x} />
   })
 }
 
+const parseResult = (selector, context) => {
+  try {
+    return printResult(parse(selector)(context))
+  } catch (e) {
+    return <ErrorMessage error={e} />
+  }
+}
+
+const printResult = (results) => {
+  return <div className="rounded">{deepInspect(results)}</div>
+}
+
 export const FieldPreview: React.FC<{
   name: string
-  activeIndex: number
-  activeSource: Instance<typeof Source>
-}> = observer(({ name, activeSource, activeIndex }) => {
+  source: Instance<typeof Source>
+}> = observer(({ name, source: { selectors, activeElement } }) => {
   try {
-    const item = parse(activeSource.selectors.item)(activeSource.document)[
-      activeIndex
-    ]
-    if (name == "item") return deepInspect(item)
+    if (name == "item") return <div>{deepInspect(activeElement)}</div>
 
     return (
-      <>
-        {deepInspect(parse(activeSource.selectors[name])(item))}
-        {deepInspect(autoValue(parse(activeSource.selectors[name])(item)))}
-      </>
+      <div className="space-y-1">
+        {parseResult(selectors[name], activeElement)}
+        {parseResult(selectors[name], activeElement)}
+      </div>
     )
   } catch (e) {
-    return <pre className="text-red-500 text-sm italic">{e.message}</pre>
+    return <ErrorMessage error={e} />
   }
 })
 
 const DescriptionPreview: React.FC<{
-  activeSource: Instance<typeof Source>
-}> = ({ activeSource }) => (
-  <div
-    className="Preview flex-auto overflow-y-auto p-8"
-    dangerouslySetInnerHTML={{
-      __html: safeProcessor.processSync(activeSource.activeItem?.description)
-        .value,
-    }}
-  />
-)
+  source: Instance<typeof Source>
+}> = observer(({ source: { selectors, activeElement } }) => {
+  try {
+    const result = parse(selectors.description)(activeElement)
+    return (
+      <div className="space-y-1">
+        {printResult(result)}
+        <div
+          className="Preview flex-auto overflow-y-auto p-2 bg-white rounded text-sm"
+          dangerouslySetInnerHTML={{
+            __html: safeProcessor.processSync($auto(result)).value,
+          }}
+        />
+      </div>
+    )
+  } catch (e) {
+    return <ErrorMessage error={e} />
+  }
+})
 
 export const SourceEditPanel: React.FC<{
-  activeSource: Instance<typeof Source> & PropsWithChildren<Panel>
-}> = observer(({ activeSource, ...props }) => (
+  source: Instance<typeof Source>
+}> = observer(({ source, ...props }) => (
   <Panel
     {...props}
     icon={<MdEdit size="1.5rem" />}
     header={<Heading>Edit Source</Heading>}
-    contentClass="space-y-8 px-8 py-8"
+    contentClass="space-y-8 px-8 py-8 bg-gray-50"
   >
     <div className="space-y-2">
-      <div className="flow-row space-x-4">
-        <Field title="Type" className="flex-none w-[8ch]">
+      <div className="flex flex-grow space-x-4">
+        <Field
+          title="Type"
+          className="flex-none w-[12ch]"
+          contentClass="flow-col space-y-2"
+        >
           <Select
-            value={activeSource.kind}
+            value={source.kind}
             onChange={(e) => {
-              activeSource.update({ kind: e.target.value })
+              source.update({ kind: e.target.value })
             }}
           >
             <option value="json">JSON</option>
@@ -78,127 +100,118 @@ export const SourceEditPanel: React.FC<{
             <option value="xml">XML</option>
           </Select>
         </Field>
-        <Field title="Title" className="flex-none w-[35ch]">
+        <Field
+          title="Title"
+          className="flex-none w-[35ch]"
+          contentClass="flow-col space-y-2"
+        >
           <Input
-            value={activeSource.title}
+            value={source.title}
             onChange={(e) => {
-              activeSource.update({ title: e.target.value })
+              source.update({ title: e.target.value })
             }}
           />
         </Field>
-        <Field title="Base URL">
+        <Field title="Base URL" contentClass="flow-col space-y-2">
           <Input
-            value={activeSource.baseURL || ""}
+            value={source.baseURL || ""}
             onChange={(e) => {
-              activeSource.update({ baseURL: e.target.value })
+              source.update({ baseURL: e.target.value })
             }}
           />
         </Field>
       </div>
+      <Field title="Source URLs" contentClass="flow-col space-y-2">
+        <AutoTextArea
+          value={source.hrefs.join("\n")}
+          onChange={(e) => {
+            source.update({ hrefs: e.target.value.split("\n") })
+          }}
+        />
+      </Field>
     </div>
 
     <div className="space-y-2">
       <div className="space-y-2">
-        <Field title="Item">
+        <Field title="Item" contentClass="flow-col space-y-2">
           <Input
             className="font-mono text-sm"
-            value={activeSource.selectors.item}
+            value={source.selectors.item}
             onChange={(e) => {
-              activeSource.selectors.update({ item: e.target.value })
+              source.selectors.update({ item: e.target.value })
             }}
           />
-          <FieldPreview
-            activeIndex={activeSource.activeIndex}
-            name="item"
-            activeSource={activeSource}
-          />
+          <FieldPreview name="item" source={source} />
         </Field>
-        <Field title="Link" className="space-y-1">
+        <Field
+          title="Link"
+          className="space-y-1"
+          contentClass="flow-col space-y-2"
+        >
           <Input
             className="font-mono text-sm"
-            value={activeSource.selectors.href}
+            value={source.selectors.href}
             onChange={(e) => {
-              activeSource.selectors.update({ href: e.target.value })
+              source.selectors.update({ href: e.target.value })
             }}
           />
-          <FieldPreview
-            activeIndex={activeSource.activeIndex}
-            name="href"
-            activeSource={activeSource}
-          />
+          <FieldPreview name="href" source={source} />
         </Field>
-        <Field title="Title">
+        <Field title="Title" contentClass="flow-col space-y-2">
           <Input
             className="font-mono text-sm"
-            value={activeSource.selectors.title}
+            value={source.selectors.title}
             onChange={(e) => {
-              activeSource.selectors.update({ title: e.target.value })
+              source.selectors.update({ title: e.target.value })
             }}
           />
-          <FieldPreview
-            activeIndex={activeSource.activeIndex}
-            name="title"
-            activeSource={activeSource}
-          />
+          <FieldPreview name="title" source={source} />
         </Field>
-        <Field title="Description">
+        <Field title="Description" contentClass="flow-col space-y-2">
           <Input
             className="font-mono text-sm"
-            value={activeSource.selectors.description}
+            value={source.selectors.description}
             onChange={(e) => {
-              activeSource.selectors.update({
+              source.selectors.update({
                 description: e.target.value,
               })
             }}
           />
-          <DescriptionPreview activeSource={activeSource} />
+          <DescriptionPreview source={source} />
         </Field>
-        <Field title="Published At">
+        <Field title="Published At" contentClass="flow-col space-y-2">
           <Input
             className="font-mono text-sm"
-            value={activeSource.selectors.publishedAt}
+            value={source.selectors.publishedAt}
             onChange={(e) => {
-              activeSource.selectors.update({
+              source.selectors.update({
                 publishedAt: e.target.value,
               })
             }}
           />
-          <FieldPreview
-            activeIndex={activeSource.activeIndex}
-            name="publishedAt"
-            activeSource={activeSource}
-          />
+          <FieldPreview name="publishedAt" source={source} />
         </Field>
-        <Field title="Author">
+        <Field title="Author" contentClass="flow-col space-y-2">
           <Input
             className="font-mono text-sm"
-            value={activeSource.selectors.author}
+            value={source.selectors.author}
             onChange={(e) => {
-              activeSource.selectors.update({ author: e.target.value })
+              source.selectors.update({ author: e.target.value })
             }}
           />
-          <FieldPreview
-            activeIndex={activeSource.activeIndex}
-            name="author"
-            activeSource={activeSource}
-          />
+          <FieldPreview name="author" source={source} />
         </Field>
-        <Field title="Image">
+        <Field title="Image" contentClass="flow-col space-y-2">
           <Input
             className="font-mono text-sm"
-            value={activeSource.selectors.image}
+            value={source.selectors.image}
             onChange={(e) => {
-              activeSource.selectors.update({ image: e.target.value })
+              source.selectors.update({ image: e.target.value })
             }}
           />
-          <FieldPreview
-            activeIndex={activeSource.activeIndex}
-            name="image"
-            activeSource={activeSource}
-          />
+          <FieldPreview name="image" source={source} />
         </Field>
       </div>
     </div>
-    {/* <InspectorTable activeSource={activeSource} props={props} /> */}
   </Panel>
 ))

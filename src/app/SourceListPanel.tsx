@@ -3,13 +3,14 @@ import { productName } from "../../package.json"
 import { GiTribalGear } from "react-icons/gi"
 import { MdRefresh, MdModeEdit, MdAddCircle } from "react-icons/md"
 import { Panel, HeaderButton, Spinner } from "../components"
-import { inject, observer, useLocalStore } from "mobx-react"
+import { inject, observer } from "mobx-react"
 
-import { AddSourcePopover } from "../components/AddSourcePopover"
 import { SourceList } from "./SourceList"
 import { Heading } from "./Heading"
 import { Instance } from "mobx-state-tree"
 import { Store } from "../models/Store"
+import { digest } from "../support/util"
+import clsx from "clsx"
 
 export const SourceListPanel = inject("store")(
   observer(
@@ -22,48 +23,35 @@ export const SourceListPanel = inject("store")(
     } & PropsWithChildren<Panel>) => {
       const ref = useRef()
 
-      const state = useLocalStore(() => ({
-        isPopoverOpen: false,
-        value: "",
-      }))
-
       const onRefresh = () => {
         store.fetchSources()
       }
 
       const onAdd = () => {
-        state.isPopoverOpen = true
+        store.addSource({
+          id: digest(Date.now()),
+          title: "New Source",
+        })
       }
 
       return (
         <Panel
+          id="source-list-panel"
           {...props}
-          className={["relative", className]}
+          className={clsx("relative", className)}
           icon={<GiTribalGear size="2rem" />}
           header={
-            <div className="flex flex-auto items-center justify-between">
+            <div className=":uno-panel-source-list: flow-row items-center justify-between">
               <Heading>{productName}</Heading>
               <div className="flex divide-pink-500 divide-x">
                 <HeaderButton ref={ref} className="px-2" onClick={onAdd}>
                   <MdAddCircle size="1.25rem" />
                 </HeaderButton>
-                {state.isPopoverOpen && (
-                  <AddSourcePopover
-                    className="px-2"
-                    referenceElement={ref}
-                    onDismiss={() => {
-                      state.isPopoverOpen = false
-                    }}
-                  />
-                )}
 
                 <HeaderButton
-                  className={[
-                    "px-2",
-                    {
-                      "text-white": store.isEditing,
-                    },
-                  ]}
+                  className={clsx("px-2", {
+                    "text-white": store.isEditing,
+                  })}
                   onClick={store.toggleEdit}
                 >
                   <MdModeEdit size="1.25rem" />
