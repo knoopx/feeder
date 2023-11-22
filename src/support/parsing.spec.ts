@@ -43,6 +43,7 @@ test("car:last", outputs("Blue"))
 test("car | upper", outputs("RED"))
 test("number@value", outputs("2"))
 test("@value", outputs("2", document.querySelector("number")))
+test("person:contains('Doe')", outputs("John Doe"))
 // test(`a[href*="/blog/"]:not(:contains("view all"))`, outputs(null))
 // test("car", rawOutputs(document.querySelectorAll("car")))
 

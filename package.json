@@ -40,6 +40,7 @@
     "moment": "^2.29.4",
     "parse-human-relative-time": "^3.0.2",
     "peggy": "^3.0.2",
+    "postcss-nested": "^6.0.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-hotkeys-hook": "^3.4.6",

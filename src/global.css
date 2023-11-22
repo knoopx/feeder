@@ -1,4 +1,5 @@
 @import "@unocss/reset/tailwind.css";
+@import "@unocss/reset/tailwind-compat.css";
 
 * {
   -webkit-font-smoothing: antialiased;
@@ -23,20 +24,16 @@ iframe {
 
 .preview {
   @apply max-w-[80ch];
-
   font-size: 16px;
-
   :not(pre) > code {
     @apply text-sm whitespace-nowrap;
     @apply bg-muted rounded px-2 py-1 mx-1;
   }
-
   pre {
     @apply overflow-auto;
     @apply text-sm leading-tight;
     @apply bg-muted rounded p-4;
   }
-
   p,
   pre,
   blockquote,
@@ -53,7 +50,6 @@ iframe {
   hr {
     @apply mb-4;
   }
-
   b,
   strong,
   h1,
@@ -64,7 +60,6 @@ iframe {
   h6 {
     @apply font-medium;
   }
-
   h1,
   h2,
   h3,
@@ -73,60 +68,46 @@ iframe {
   h6 {
     @apply leading-tight;
   }
-
   h1 {
     @apply text-5xl;
   }
-
   h2 {
     @apply text-4xl;
   }
-
   h3 {
     @apply text-3xl;
   }
-
   h4 {
     @apply text-2xl;
   }
-
   h5 {
     @apply text-xl;
   }
-
   h6 {
     @apply text-lg;
   }
-
   ul,
   ol {
     @apply pl-4;
   }
-
   ul {
     @apply list-disc;
   }
-
   ol {
     @apply list-decimal;
   }
-
   blockquote {
     @apply border-l-4 border-pink-600 px-4 italic bg-pink-100 py-2;
   }
-
   mark {
     @apply bg-pink-200;
   }
-
   img {
     @apply inline-block;
   }
-
   caption {
     @apply text-sm text-muted;
   }
-
   table,
   blockquote,
   ol,
@@ -135,28 +116,22 @@ iframe {
       @apply mb-0;
     }
   }
-
   table {
     @apply border-separate rounded border overflow-auto text-sm;
-
     border-spacing: 0;
-
     tr th,
     tr td {
       @apply border-r border-b;
-
       &:last-child {
         @apply border-r-0;
       }
     }
-
     tbody tr:last-child {
       td,
       th {
         @apply border-b-0;
       }
     }
-
     th,
     td {
       @apply px-2 py-1;

@@ -1,11 +1,13 @@
-import { PropsWithChildren, useEffect } from "react"
+import clsx from "clsx"
+import { useEffect } from "react"
 import { inject, observer } from "mobx-react"
 import { Panel, HeaderButton, FavIcon, Preview, TimeAgo } from "../components"
 import { MdOpenInBrowser, MdPerson, MdWeekend } from "react-icons/md"
 import { Instance } from "mobx-state-tree"
 import { EmptyPlaceholder } from "../components/EmptyPlaceholder"
 import { Store } from "../models/Store"
-import clsx from "clsx"
+import { Item } from "../models/Item"
+import { isStateTreeNode, getType } from "mobx-state-tree"
 
 export const ItemPanel = inject("store")(
   observer(
@@ -14,9 +16,11 @@ export const ItemPanel = inject("store")(
       ...props
     }: {
       store?: Instance<typeof Store>
-    } & PropsWithChildren<Panel>) => {
+    }) => {
       useEffect(() => {
-        item?.update({ isNew: false })
+        if (isStateTreeNode(item) && getType(item) === Item) {
+          item.update({ isNew: false })
+        }
       }, [item])
 
       return (

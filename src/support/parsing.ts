@@ -18,7 +18,7 @@ export function parse(expr: string) {
 
 export const $auto = (input: string | string[] | Element | Document) => {
   if (Array.isArray(input)) {
-    return $auto(input[0])
+    return $auto(input.find(Boolean))
   }
   if (input instanceof Document) {
     return input.documentElement.innerHTML
@@ -37,7 +37,7 @@ export const $auto = (input: string | string[] | Element | Document) => {
 
 export function $first(result: any) {
   if (isArray(result)) {
-    return result[0]
+    return result.filter(Boolean)[0]
   }
   return result
 }

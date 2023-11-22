@@ -32,7 +32,9 @@ prop = "@" n:name {
     if (!el) return null
     if (el instanceof HTMLDocument)
       el = el.documentElement
-    return el.getAttribute(n)
+    if (el.hasAttribute(n))
+      return el.getAttribute(n)
+    return el[n]
   }
 }
 
@@ -54,7 +56,10 @@ expr =
   }
 }
 
-string = "'" chars:([^'])* "'" { return text() } / "\"" chars:([^"])* "\"" { return text() }
+string =
+  quote chars:([^'])* quote /
+  dquote chars:([^"])* dquote { return text() }
+
 id = "#" name
 class = "." name
 el = name? id? class* { return text() }

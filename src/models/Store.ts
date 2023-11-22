@@ -142,7 +142,7 @@ export const Store = t
     },
     setActiveItem(item: Instance<typeof Item> | null) {
       self._activeItem = item
-      item?.source.update({ activeItem: item })
+      item?.source.update({ activeItemId: item.id })
     },
     advanceSource(direction: number) {
       const nextIndex =

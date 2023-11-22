@@ -47,7 +47,6 @@ export const SourcePreviewPanel: React.FC<{
   activeSource: Instance<typeof Source> & PropsWithChildren<Panel>
 }> = observer(({ activeSource, ...props }) => (
   <Panel
-    id="source-preview-panel"
     {...props}
     icon={<MdSearch size="1.5rem" />}
     header={<Heading>Source Preview</Heading>}

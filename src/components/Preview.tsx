@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { safeProcessor } from "../support/processor"
 import { Instance } from "mobx-state-tree"
 import { Store } from "../models/Store"
+import clsx from "clsx"
 
 export const Preview: React.FC<{
   item: any
@@ -17,7 +18,7 @@ export const Preview: React.FC<{
       }
     }, [item.href])
 
-    let html = item.oembed ? item.oembed.html : item.htmlDescription
+    let html = item.oembed ? item.oembed.html : item.description
 
     if (item.source.readability) {
       if (!item.readableDescription) {
@@ -35,7 +36,7 @@ export const Preview: React.FC<{
 
     return (
       <div
-        className={className}
+        className={clsx("preview text-lg", className)}
         dangerouslySetInnerHTML={{
           __html: safeProcessor.processSync(html).value,
         }}

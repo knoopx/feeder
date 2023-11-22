@@ -8,7 +8,7 @@ import { Instance } from "mobx-state-tree"
 import { Inspector } from "react-inspector"
 import { Source } from "./Source"
 import { observer } from "mobx-react"
-import { $auto, parse } from "../support/parsing"
+import { $auto, $string, parse } from "../support/parsing"
 import { ErrorMessage } from "../components/ErrorMessage"
 import { AutoTextArea } from "../components/AutoTextArea"
 
@@ -61,9 +61,10 @@ const DescriptionPreview: React.FC<{
       <div className="space-y-1">
         {printResult(result)}
         <div
-          className="Preview flex-auto overflow-y-auto p-2 bg-white rounded text-sm"
+          className="prose flex-auto overflow-y-auto p-2 bg-white rounded text-sm"
           dangerouslySetInnerHTML={{
-            __html: safeProcessor.processSync($auto(result)).value,
+            __html: safeProcessor.processSync($auto(result) ?? "").value,
+            // __html: $auto(result),
           }}
         />
       </div>
